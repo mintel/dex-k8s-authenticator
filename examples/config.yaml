@@ -1,0 +1,17 @@
+clusters:
+  - name: example-cluster 
+    short_description: "Example Cluster"
+    description: "Example Cluster Long Description..."
+    client_secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+    issuer:  http://127.0.0.1:5556
+    k8s_master_uri: https://your-k8s-master.cluster
+    client_id: example-cluster-client-id
+    redirect_uri: http://127.0.0.1:5555/callback/example-cluster
+    k8s_ca_uri: http://url-to-your-ca.crt
+    
+#tls_cert: /path/to/dex-client.crt
+#tls_key: /path/to/dex-client.key
+
+listen: http://127.0.0.1:5555
+#logo_uri: http://<path-to-your-logo.png>
+debug: false
