@@ -184,7 +184,7 @@ func start_app(config Config) {
 
 var RootCmd = &cobra.Command{
 	Use:   "dex-k8s-authenticator",
-	Short: "Dex Kubernetes Authentictor",
+	Short: "Dex Kubernetes Authenticator",
 	Long:  `Dex Kubernetes Authenticator provides a web-interface to generate a kubeconfig file based on a selected Kubernetes cluster. One or more clusters can be defined in the configuration file.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
