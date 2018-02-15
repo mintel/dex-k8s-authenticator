@@ -15,19 +15,20 @@ func renderIndex(w http.ResponseWriter, config *Config) {
 }
 
 type tokenTmplData struct {
-	IDToken      string
-	RefreshToken string
-	RedirectURL  string
-	Claims       string
-	Username     string
-	Issuer       string
-	ClusterName  string
-	ClientSecret string
-	ClientID     string
-	K8sMasterURI string
-	K8sCaURI     string
-	IDPCaURI     string
-	LogoURI      string
+	IDToken          string
+	RefreshToken     string
+	RedirectURL      string
+	Claims           string
+	Username         string
+	Issuer           string
+	ClusterName      string
+	ShortDescription string
+	ClientSecret     string
+	ClientID         string
+	K8sMasterURI     string
+	K8sCaURI         string
+	IDPCaURI         string
+	LogoURI          string
 }
 
 func (cluster *Cluster) renderToken(w http.ResponseWriter,
@@ -49,19 +50,20 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	t, _ := template.ParseFiles("./templates/kubeconfig.html")
 
 	token_data := tokenTmplData{
-		IDToken:      idToken,
-		RefreshToken: refreshToken,
-		RedirectURL:  cluster.Redirect_URI,
-		Claims:       string(claims),
-		Username:     unix_username,
-		Issuer:       data["iss"].(string),
-		ClusterName:  cluster.Name,
-		ClientSecret: cluster.Client_Secret,
-		ClientID:     cluster.Client_ID,
-		K8sMasterURI: cluster.K8s_Master_URI,
-		K8sCaURI:     cluster.K8s_Ca_URI,
-		IDPCaURI:     idpCaURI,
-		LogoURI:      logoURI}
+		IDToken:          idToken,
+		RefreshToken:     refreshToken,
+		RedirectURL:      cluster.Redirect_URI,
+		Claims:           string(claims),
+		Username:         unix_username,
+		Issuer:           data["iss"].(string),
+		ClusterName:      cluster.Name,
+		ShortDescription: cluster.Short_Description,
+		ClientSecret:     cluster.Client_Secret,
+		ClientID:         cluster.Client_ID,
+		K8sMasterURI:     cluster.K8s_Master_URI,
+		K8sCaURI:         cluster.K8s_Ca_URI,
+		IDPCaURI:         idpCaURI,
+		LogoURI:          logoURI}
 
 	t.Execute(w, token_data)
 

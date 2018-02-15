@@ -86,4 +86,6 @@ pre {
   background-color: #eff0f1;
   margin: 5px;
   padding: 5px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
