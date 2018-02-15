@@ -24,7 +24,7 @@ Creates ./bin/dex-k8s-authenticator
 Follow the example here:
 https://github.com/coreos/dex/blob/master/Documentation/getting-started.md
 
-Start it with using the provided `./examples/dex-server-config.yaml`
+Start it with using the provided `./examples/dex-server-config-dev.yaml`
 
 ### Start Dex K8s Authenticator
 
