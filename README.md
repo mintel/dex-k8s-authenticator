@@ -1,8 +1,9 @@
 # Dex K8s Authenticator
 
-A client-side web-app which talks to one or more Dex Identity services to generate kubectl commands for creating and modifying a kubeconfig.
+A helper web-app which talks to one or more [Dex Identity services](https://github.com/coreos/dex) to generate
+`kubectl` commands for creating and modifying a `kubeconfig`.
 
-* Web-UI supports generating tokens against multiple clusters
+* The Web UI supports generating tokens against multiple clusters
     * Dev / Staging / Production etc
 * Generates appropriate `kubectl config` commands (user/cluster/context)
 * SSL Support
@@ -53,3 +54,14 @@ required settings.
 
 You can update the Dockerfile and add any required root-certs to `/usr/local/share/ca-certificates/`, then run `update-ca-certificates`
 
+## Alternatives
+
+A similar web UI that generates `kubectl` configurations without using `dex` to authenticate first
+* https://github.com/negz/kuberos
+
+OIDC helpers that run locally to setup `kubectl`:
+* https://github.com/micahhausler/k8s-oidc-helper
+* https://github.com/coreos/dex/tree/master/cmd/example-app
+
+A Kubernetes JWT webhook helper with a similar UX to Kuberos
+* https://github.com/negz/kubehook
