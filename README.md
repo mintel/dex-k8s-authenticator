@@ -8,6 +8,12 @@ A helper web-app which talks to one or more [Dex Identity services](https://gith
 * Generates appropriate `kubectl config` commands (user/cluster/context)
 * SSL Support
 
+## Screen shots
+
+![Index Page](examples/index-page.png)
+
+![Kubeconfig Page](examples/kubeconfig-page.png)
+
 ## Building a binary
 
     make 
