@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "dex-k8s-authenticator.fullname" . }}
+  labels:
+    app: {{ template "dex-k8s-authenticator.name" . }}
+    env: {{ default "dev" .Values.global.deployEnv }}
+    chart: {{ template "dex-k8s-authenticator.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "dex-k8s-authenticator.name" . }}
+    release: {{ .Release.Name }}

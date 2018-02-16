@@ -1,0 +1,63 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "dex-k8s-authenticator.fullname" . }}
+  labels:
+    app: {{ template "dex-k8s-authenticator.name" . }}
+    env: {{ default "dev" .Values.global.deployEnv }}
+    chart: {{ template "dex-k8s-authenticator.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "dex-k8s-authenticator.name" . }}
+      env: {{ default "dev" .Values.global.deployEnv }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "dex-k8s-authenticator.name" . }}
+        env: {{ default "dev" .Values.global.deployEnv }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: [ "--config", "config.yaml" ]
+        ports:
+        - name: http
+          containerPort: {{ default "5555" .Values.dexK8sAuthenticator.port }}
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        volumeMounts:
+        - name: config
+          subPath: config.yaml
+          mountPath: /app/config.yaml
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 6 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "dex-k8s-authenticator.name" . }}

@@ -1,0 +1,225 @@
+# Helm Chart for deploying dex
+
+This chart installs `dex` in a Kubernetes cluster. You can use this deployment for one cluster 
+or for any number of cluster you configure under `staticClients` in the configuration.
+
+You also need to configure each Kubernetes cluster to use `dex` by [setting the OIDC parameters
+for the Kubernetes API server](https://kubernetes.io/docs/admin/authentication/#openid-connect-tokens). 
+This is easy using [`kube-aws` installer](https://github.com/kubernetes-incubator/kube-aws/tree/master/contrib/dex).
+
+If you want an easy way to issue and install `kubectl` credentials, then you should also
+install [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator). There
+is a `helm` chart available for that too (in its repo).
+
+```
+# Default values for dex
+
+# Deploy environment label, e.g. dev, test, prod
+global:
+  deployEnv: dev
+
+replicaCount: 1
+
+image:
+  repository: quay.io/coreos/dex
+  tag: v2.9.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5556
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - dex.example.com
+  tls: []
+  #  - secretName: dex.example.com
+  #    hosts:
+  #      - dex.example.com
+
+# rbac will use the 'default' Service Account if 'serviceAccount.create' is false
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  # Service Account name defaults to an automatically generated name
+  #name: "custom-name"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 50Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 50Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+# Configuration file for Dex
+# Certainly secret fields can use environment variables
+#
+config: |-
+  issuer: https://dex.example.com
+
+  storage:
+    type: kubernetes
+    config:
+      inCluster: true
+
+  web:
+    http: 0.0.0.0:5556
+
+  frontend:
+    theme: "coreos"
+    issuer: "Example Co"
+    issuerUrl: "https://example.com"
+    logoUrl: https://example.com/images/logo-250x25.png
+
+  expiry:
+    signingKeys: "6h"
+    idTokens: "24h"
+  
+  logger:
+    level: debug
+    format: json
+
+  oauth2:
+    responseTypes: ["code", "token", "id_token"]
+    skipApprovalScreen: true
+
+  # Remember you can have multiple connectors of the same 'type' (with different 'id's)
+  # If you need e.g. logins with groups for two different Microsoft 'tenants'
+  connectors:
+
+  # GitHub configure 'OAuth Apps' -> 'New OAuth App', add callback URL
+  # https://github.com/settings/developers
+  - type: github
+    id: github
+    name: GitHub
+    config:
+      clientID: $GITHUB_CLIENT_ID
+      clientSecret: $GITHUB_CLIENT_SECRET
+      redirectURI: https://dex.example.com/callback
+      # 'orgs' can be used to map groups from Github
+      # https://github.com/coreos/dex/blob/master/Documentation/connectors/github.md
+      #orgs:
+      #- name: foo
+      #  teams:
+      #  - team-red
+      #  - team-blue
+      #- name: bar
+
+  # Google APIs account, 'Create Credentials' -> 'OAuth Client ID', add callback URL
+  # https://console.developers.google.com/apis/credentials
+  - type: oidc
+    id: google
+    name: Google
+    config:
+      issuer: https://accounts.google.com
+      clientID: $GOOGLE_CLIENT_ID
+      clientSecret: $GOOGLE_CLIENT_SECRET
+      redirectURI: https://dex.example.com/callback
+      # Google supports whitelisting allowed domains when using G Suite
+      # (Google Apps). The following field can be set to a list of domains
+      # that can log in:
+      # hostedDomains:
+      #  - example.com
+      #  - other.example.com
+
+  # Microsoft App Dev account, 'Add an app'
+  # 'Application Secrets' -> 'Generate new password'
+  # 'Platforms' -> 'Add Platform' -> 'Web', add the callback URL
+  # https://apps.dev.microsoft.com/
+  - type: microsoft
+    id: microsoft
+    name: Microsoft
+    config:
+      clientID: $MICROSOFT_APPLICATION_ID
+      clientSecret: $MICROSOFT_CLIENT_SECRET
+      redirectURI: https://dex.example.com/callback
+      # Restrict access to one tenant
+      # tenant: <tenant name> or <tenant uuid>
+      # Restrict access to certain groups
+      # groups:
+      # - group-red
+      # - group-blue
+
+  # These may not match the schema used by your LDAP server
+  # https://github.com/coreos/dex/blob/master/Documentation/connectors/ldap.md
+  - type: ldap
+    id: ldap
+    name: "LDAP"
+    config:
+      host: ldap.example.com:389
+      startTLS: true
+      bindDN: "cn=serviceAccount,dc=example,dc=com"
+      bindPW: $LDAP_BINDPW
+      usernamePrompt: "Username"
+      userSearch:
+        # Query should be "(&(objectClass=inetorgperson)(cn=<username>))"
+        baseDN: "ou=Users,dc=example,dc=com"
+        filter: "(objectClass=inetorgperson)"
+        username: cn
+        # DN must be in capitals
+        idAttr: DN
+        emailAttr: mail
+        nameAttr: displayName
+      groupSearch:
+        # Query should be "(&(objectClass=groupOfUniqueNames)(uniqueMember=<userAttr>))"
+        baseDN: "ou=Groups,dc=example,dc=com"
+        filter: "(objectClass=groupOfUniqueNames)"
+        # DN must be in capitals
+        userAttr: DN
+        groupAttr: uniqueMember
+        nameAttr: cn
+
+  # The 'name' must match the k8s API server's 'oidc-client-id'
+  staticClients:
+  - id: my-cluster
+    name: "my-cluster"
+    secret: "pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok"
+    redirectURIs:
+    - https://login.example.com/callback/my-cluster
+  
+  enablePasswordDB: False
+  staticPasswords:
+  - email: "admin@example.com"
+    # bcrypt hash of the string "password"
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+    username: "admin"
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"  
+
+
+# You should not enter your secrets here if this file will be stored in source control
+# Instead create a separate file to hold or override these values
+# You need only list the environment variables you used in the 'config' above
+# You can add any additional ones you need, or remove ones you don't need
+#
+envSecrets:
+  # GitHub
+  GITHUB_CLIENT_ID: "override-me"
+  GITHUB_CLIENT_SECRET: "override-me"
+  # Google (oidc)
+  GOOGLE_CLIENT_ID: "override-me"
+  GOOGLE_CLIENT_SECRET: "override-me"
+  # Microsoft
+  MICROSOFT_APPLICATION_ID: "override-me"
+  MICROSOFT_CLIENT_SECRET: "override-me"
+  # LDAP
+  LDAP_BINDPW: "override-me"
+```
