@@ -36,6 +36,12 @@ Start it with using the provided `./examples/dex-server-config.yaml`
 * Login with `admin@example.com` followed by the password `password`
 * You should be redirected back to the dex-k8s-authenticator
 
+## Deploying using Helm
+
+This project provides [`helm` charts](charts) for deploying both `dex` and
+`dex-k8s-authenticator` to your Kubernetes cluster. Instructions are provided
+for each chart.
+
 ## Multiple Clusters
 
 You can run multiple Dex Server instances with different backends if required.
