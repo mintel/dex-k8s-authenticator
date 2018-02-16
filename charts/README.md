@@ -1,4 +1,4 @@
-# Helm charts for installing `dex` with `dex-k8s-authenticator`
+# Helm charts for installing 'dex' with 'dex-k8s-authenticator'
 
 The charts in this folder install [`dex`](https://github.com/coreos/dex) 
 with [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator)
