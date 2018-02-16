@@ -18,7 +18,7 @@ global:
 replicaCount: 1
 
 image:
-  repository: 212381861325.dkr.ecr.ap-southeast-2.amazonaws.com/kube/dex-k8s-authenticator
+  repository: whereisaaron/dex-k8s-authenticator
   tag: latest
   pullPolicy: Always
 

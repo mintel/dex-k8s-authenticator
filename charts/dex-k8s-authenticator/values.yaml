@@ -7,7 +7,7 @@ global:
 replicaCount: 1
 
 image:
-  repository: your-repo-where-you-built-dex-k8s-authenticator/foo/dex-k8s-authenticator
+  repository: whereisaaron/dex-k8s-authenticator
   tag: latest
   pullPolicy: Always
 
