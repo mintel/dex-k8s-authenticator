@@ -6,7 +6,7 @@ with [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator)
 `dex-k8s-authenticator` is a helper application for `dex`. `dex` lets you use external 
 Identify Providers (like Google, Microsoft, GitHUb, LDAP) to authenticate access to Kubernetes cluster
 (e.g. for `kubectl`). This helper makes it easy to provide a web UI for one or more clusters.
-It give uses the information and commands to configure `kubectl` to work with the credentials `dex` provides.
+It gives users the information and commands to configure `kubectl` to work with the credentials `dex` provides.
 
 Each install of `dex` and/or `dex-k8s-authenticator` can support multiple Kubernetes clusters.
 So you can install one of each for all your clusters, one in each cluster, or any combination.
