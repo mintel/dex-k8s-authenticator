@@ -18,7 +18,7 @@ global:
 replicaCount: 1
 
 image:
-  repository: whereisaaron/dex-k8s-authenticator
+  repository: mintel/dex-k8s-authenticator
   tag: latest
   pullPolicy: Always
 
