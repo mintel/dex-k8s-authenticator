@@ -32,6 +32,17 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Create the name of the service account to use
+*/}}
+{{- define "dex.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+    {{ default (include "dex.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create secret key from environment variables
 */}}
 {{- define "dex.envkey" -}}
