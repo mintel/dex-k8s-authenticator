@@ -35,6 +35,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
+      serviceAccountName: {{ template "dex.serviceAccountName" . }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
