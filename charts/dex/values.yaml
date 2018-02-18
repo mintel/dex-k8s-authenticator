@@ -182,7 +182,7 @@ config: |-
     redirectURIs:
     - https://login.example.com/callback/my-cluster
   
-  enablePasswordDB: False
+  enablePasswordDB: True
   staticPasswords:
   - email: "admin@example.com"
     # bcrypt hash of the string "password"
