@@ -1,4 +1,4 @@
-{{- if .Values.serviceAccount.create }}
+{{- if .Values.rbac.create }}
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -41,7 +41,7 @@ roleRef:
   name: {{ template "dex.fullname" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ default "default" .Values.serviceAccount.name }}
+  name: {{ template "dex.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -55,8 +55,8 @@ roleRef:
   name: {{ template "dex.fullname" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ default "default" .Values.serviceAccount.name }}
-  namespace: {{ template "dex.fullname" . }}
+  name: {{ template "dex.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
 {{- end }}
 
 

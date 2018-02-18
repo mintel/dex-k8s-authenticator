@@ -28,14 +28,16 @@ ingress:
   #    hosts:
   #      - dex.example.com
 
-# rbac will use the 'default' Service Account if 'serviceAccount.create' is false
 rbac:
+  # Specifies whether RBAC resources should be created
   create: true
-
+  
 serviceAccount:
+  # Specifies whether a ServiceAccount should be created
   create: true
-  # Service Account name defaults to an automatically generated name
-  #name: "custom-name"
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
