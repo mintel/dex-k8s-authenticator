@@ -1,10 +1,10 @@
 # Helm charts for installing 'dex' with 'dex-k8s-authenticator'
 
-The charts in this folder install [`dex`](https://github.com/coreos/dex) 
+The charts in this folder install [`dex`](https://github.com/coreos/dex)
 with [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator)
 
 `dex-k8s-authenticator` is a helper application for `dex`. `dex` lets you use external 
-Identify Providers (like Google, Microsoft, GitHUb, LDAP) to authenticate access to Kubernetes cluster
+Identify Providers (like Google, Microsoft, GitHub, LDAP) to authenticate access to Kubernetes cluster
 (e.g. for `kubectl`). This helper makes it easy to provide a web UI for one or more clusters.
 It gives users the information and commands to configure `kubectl` to work with the credentials `dex` provides.
 
@@ -30,3 +30,4 @@ This is easy using [`kube-aws` installer](https://github.com/kubernetes-incubato
 helm install --namespace dex --values dex.yaml charts/dex
 helm install --namespace dex --values dex-k8s-authenticator charts/dex-k8s-authenticator
 ```
+Navigate to https://login.example.com and follow the instructions to authenticate using `dex` and configure `kubectl`.
