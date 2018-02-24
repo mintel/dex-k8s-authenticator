@@ -59,11 +59,11 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 		code := r.FormValue("code")
 		if code == "" {
-			http.Error(w, fmt.Sprintf("no code in request: %q", r.Form), http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("No code in request: %q", r.Form), http.StatusBadRequest)
 			return
 		}
 		if state := r.FormValue("state"); state != exampleAppState {
-			http.Error(w, fmt.Sprintf("expected state %q got %q", exampleAppState, state), http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("Expected state %q got %q", exampleAppState, state), http.StatusBadRequest)
 			return
 		}
 		token, err = oauth2Config.Exchange(ctx, code)
@@ -71,7 +71,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		// Form request from frontend to refresh a token.
 		refresh := r.FormValue("refresh_token")
 		if refresh == "" {
-			http.Error(w, fmt.Sprintf("no refresh_token in request: %q", r.Form), http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("No refresh_token in request: %q", r.Form), http.StatusBadRequest)
 			return
 		}
 		t := &oauth2.Token{
@@ -80,18 +80,18 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 		token, err = oauth2Config.TokenSource(ctx, t).Token()
 	default:
-		http.Error(w, fmt.Sprintf("method not implemented: %s", r.Method), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Method not implemented: %s", r.Method), http.StatusBadRequest)
 		return
 	}
 
 	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to get token: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to get token: %v", err), http.StatusInternalServerError)
 		return
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		http.Error(w, "no id_token in token response", http.StatusInternalServerError)
+		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
 		return
 	}
 

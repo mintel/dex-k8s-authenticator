@@ -147,7 +147,7 @@ func start_app(config Config) {
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 
 		if err != nil {
-			fmt.Errorf("parse redirect_uri address: %v", err)
+			fmt.Errorf("Parsing redirect_uri address: %v", err)
 			os.Exit(1)
 		}
 
@@ -171,13 +171,13 @@ func start_app(config Config) {
 	// Determine whether to use TLS or not
 	switch listenURL.Scheme {
 	case "http":
-		log.Printf("listening on %s", config.Listen)
+		log.Printf("Listening on %s", config.Listen)
 		http.ListenAndServe(listenURL.Host, nil)
 	case "https":
-		log.Printf("listening on %s", config.Listen)
+		log.Printf("Listening on %s", config.Listen)
 		http.ListenAndServeTLS(listenURL.Host, config.TLS_Cert, config.TLS_Key, nil)
 	default:
-		fmt.Errorf("listen address %q is not using http or https", config.Listen)
+		fmt.Errorf("Listen address %q is not using http or https", config.Listen)
 	}
 }
 
