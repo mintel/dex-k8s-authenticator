@@ -22,7 +22,6 @@ var (
 	debug       bool
 )
 
-// Debug transport lay"github.com/spf13/cobra"er
 type debugTransport struct {
 	t http.RoundTripper
 }
