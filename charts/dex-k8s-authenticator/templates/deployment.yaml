@@ -43,6 +43,13 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
+{{- if .Values.caCerts.enabled }}
+{{- range .Values.caCerts.secrets }}
+        - name: {{ template "dex-k8s-authenticator.name" $ }}-{{ .name }}
+          subPath: {{ .name }}
+          mountPath: /certs/{{ .name }}
+{{- end }}
+{{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
     {{- with .Values.nodeSelector }}
@@ -61,3 +68,10 @@ spec:
       - name: config
         configMap:
           name: {{ template "dex-k8s-authenticator.name" . }}
+{{- if .Values.caCerts.enabled }}
+{{- range .Values.caCerts.secrets }}
+      - name: {{ template "dex-k8s-authenticator.name" $ }}-{{ .name }}
+        configMap:
+          name: {{ template "dex-k8s-authenticator.name" $ }}-{{ .name }}
+{{- end }}
+{{- end }}

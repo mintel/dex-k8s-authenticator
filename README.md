@@ -63,7 +63,10 @@ required settings.
 Mount a directory containing your self signed certificates to */certs* and the entrypoint will update the local trust store before starting dex-k8s-authenticator
 
     docker run --rm -t -i -v /tmp/certs:/certs:ro -v /tmp/config.yml:/tmp/config.yml:ro mintel/dex-k8s-authenticator:latest --config /tmp/config.yml
+
 ### HELM
+
+Add list of Certificates to your values.yaml file, certificates need to be base64 encoded and their names need to end with either ".crt" or ".pem"
 
 
 ## Alternatives
