@@ -16,10 +16,15 @@ RUN apk add --update ca-certificates openssl curl
 
 COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator /app
 
-# Add any required certs here... and run update-ca-certificates
+# Add any required certs/key by mounting a volume on /certs - Entrypoint will copy them and run update-ca-certificates at startup
+RUN mkdir -p /certs
+
 WORKDIR /app
 
-ENTRYPOINT ["/app/bin/dex-k8s-authenticator"]
+COPY entrypoint.sh /
+RUN chmod a+x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["--help"]
 

@@ -58,7 +58,13 @@ required settings.
 
 ## SSL
 
-You can update the Dockerfile and add any required root-certs to `/usr/local/share/ca-certificates/`, then run `update-ca-certificates`
+### Docker
+
+Mount a directory containing your self signed certificates to */certs* and the entrypoint will update the local trust store before starting dex-k8s-authenticator
+
+    docker run --rm -t -i -v /tmp/certs:/certs:ro -v /tmp/config.yml:/tmp/config.yml:ro mintel/dex-k8s-authenticator:latest --config /tmp/config.yml
+### HELM
+
 
 ## Alternatives
 
