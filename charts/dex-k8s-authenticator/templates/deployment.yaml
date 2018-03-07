@@ -45,7 +45,7 @@ spec:
           mountPath: /app/config.yaml
 {{- if .Values.caCerts.enabled }}
 {{- range .Values.caCerts.secrets }}
-        - name: {{ template "dex-k8s-authenticator.name" $ }}-{{ .name }}
+        - name: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
           subPath: {{ .name }}
           mountPath: /certs/{{ .name }}
 {{- end }}
@@ -70,8 +70,8 @@ spec:
           name: {{ template "dex-k8s-authenticator.name" . }}
 {{- if .Values.caCerts.enabled }}
 {{- range .Values.caCerts.secrets }}
-      - name: {{ template "dex-k8s-authenticator.name" $ }}-{{ .name }}
-        configMap:
-          name: {{ template "dex-k8s-authenticator.name" $ }}-{{ .name }}
+      - name: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
+        secret:
+          secretName: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
 {{- end }}
 {{- end }}
