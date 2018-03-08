@@ -8,6 +8,11 @@ It give uses the information and commands to configure `kubectl` to work with th
 
 You can configure one or more clusters in this chart configuration, for the one or more `dex` installs you may have.
 
+## SSL - Self-managed certs
+
+* Populate `tls.certificate` and `tls.key` with b64encoded values.
+* Set `tls.create: true` to create secrets - the k8s deployment will mount these in the correct place and servce requests on https.
+* You can add CA's using the `certs` option - the ./entrypoint script will add these.
 ```
 # Default values for dex-k8s-authenticator.
 
@@ -26,13 +31,17 @@ dexK8sAuthenticator:
   port: 5555
   debug: false
   #logoUrl: http://<path-to-your-logo.png>
-  #tlsCert: /path/to/dex-client.crt
-  #tlsKey: /path/to/dex-client.key
+
+  tls:
+    create: false
+    certificate:
+    key:
+
   clusters:
   - name: my-cluster
     short_description: "My Cluster"
     description: "Example Cluster Long Description..."
-    client_secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+    client_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
     issuer: https://dex.example.com
     k8s_master_uri: https://my-cluster.example.com
     client_id: my-cluster
@@ -67,6 +76,18 @@ resources: {}
   # requests:
   #  cpu: 100m
   #  memory: 128Mi
+
+certs:
+  create: false
+  ca:
+    # Array of Self Signed Certificates - single line base64 encoded
+    # cat CA.crt | base64 -w 0
+    # - name: a_ca_name
+    #   filename: a_ca.crt
+    #   value: ...
+    # - name: a_ca_name2
+    #   filename: a_ca2.crt
+    #   value: ...
 
 nodeSelector: {}
 

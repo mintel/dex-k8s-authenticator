@@ -13,7 +13,19 @@ image:
 
 service:
   type: ClusterIP
-  port: 5556
+
+tls:
+  # Specify whether a TLS secret for Dex should be created
+  # The provided certificate and key values are used to populate the
+  # tlsCert and tlsKey values in the Dex configuration.
+  #
+  # If set to true, be sure to update the listen directive in the Dex
+  # configuration to use https.
+  create: false
+
+  # Provide base64 encoded values for certificate and key
+  certificate:
+  key:
 
 ingress:
   enabled: false
@@ -71,6 +83,7 @@ config: |-
 
   web:
     http: 0.0.0.0:5556
+    # https: 0.0.0.0:5556
 
   frontend:
     theme: "coreos"

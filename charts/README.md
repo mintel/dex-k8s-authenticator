@@ -31,3 +31,12 @@ helm install --namespace dex --values dex.yaml charts/dex
 helm install --namespace dex --values dex-k8s-authenticator charts/dex-k8s-authenticator
 ```
 Navigate to https://login.example.com and follow the instructions to authenticate using `dex` and configure `kubectl`.
+
+## Additional SSL Configuration
+
+Applicable if you're managing your own SSL certs.
+
+## Dex
+
+* Configure the Helm `web` options by uncommenting `tlsCert` and `tlsKey` and setting `https://0.0.0.0:443`
+* Configure the Helm `tls` options by setting `create: true` and providing b64encoded values for `certificate` and `key`

@@ -15,8 +15,12 @@ dexK8sAuthenticator:
   port: 5555
   debug: false
   #logoUrl: http://<path-to-your-logo.png>
-  #tlsCert: /path/to/dex-client.crt
-  #tlsKey: /path/to/dex-client.key
+
+  tls:
+    create: false
+    certificate:
+    key:
+
   clusters:
   - name: my-cluster
     short_description: "My Cluster"
@@ -57,18 +61,17 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
-caCerts: 
-  enabled: false
-  secrets: {}
-  # Array of Self Signed Certificates - single line base64 encoded 
-  # cat CA.crt | base64 -w 0
-  # name should end in either .crt or .pem since it is the name with which it will be mounted on the filesysystem
-  #secrets:
-  #- name: CA.crt
-  #  value: LS0tLS1......X2F
-  #- name: CA2.crt
-  #  value: DS1tFA1......X2F
-
+certs:
+  create: false
+  ca:
+    # Array of Self Signed Certificates - single line base64 encoded
+    # cat CA.crt | base64 -w 0
+    # - name: a_ca_name
+    #   filename: a_ca.crt
+    #   value: ...
+    # - name: a_ca_name2
+    #   filename: a_ca2.crt
+    #   value: ...
 
 nodeSelector: {}
 

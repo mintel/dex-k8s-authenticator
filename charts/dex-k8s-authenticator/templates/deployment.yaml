@@ -21,6 +21,7 @@ spec:
         app: {{ template "dex-k8s-authenticator.name" . }}
         env: {{ default "dev" .Values.global.deployEnv }}
         release: {{ .Release.Name }}
+        tier: frontend
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -28,27 +29,37 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         args: [ "--config", "config.yaml" ]
         ports:
-        - name: http
+        - name: web
           containerPort: {{ default "5555" .Values.dexK8sAuthenticator.port }}
           protocol: TCP
         livenessProbe:
           httpGet:
             path: /
-            port: http
-        readinessProbe:
+            port: web
+          {{- if .Values.dexK8sAuthenticator.tls.create }}
+            scheme: HTTPS
+          {{- end }}
+          readinessProbe:
           httpGet:
             path: /
-            port: http
+            port: web
+          {{- if .Values.dexK8sAuthenticator.tls.create }}
+            scheme: HTTPS
+          {{- end }}
         volumeMounts:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
-{{- if .Values.caCerts.enabled }}
-{{- range .Values.caCerts.secrets }}
+{{- if .Values.certs.create }}
+{{- range .Values.certs.ca }}
         - name: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
-          subPath: {{ .name }}
-          mountPath: /certs/{{ .name }}
+          subPath: {{ .filename }}
+          mountPath: /certs/{{ .filename }}
 {{- end }}
+{{- end }}
+{{- if .Values.dexK8sAuthenticator.tls.create }}
+        - name: tls
+          mountPath: /etc/dex-k8s-authenticator/tls
 {{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
@@ -68,10 +79,15 @@ spec:
       - name: config
         configMap:
           name: {{ template "dex-k8s-authenticator.fullname" . }}
-{{- if .Values.caCerts.enabled }}
-{{- range .Values.caCerts.secrets }}
+{{- if .Values.certs.create }}
+{{- range .Values.certs.ca }}
       - name: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
         secret:
           secretName: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
 {{- end }}
+{{- end }}
+{{- if .Values.dexK8sAuthenticator.tls.create }}
+      - name: tls
+        secret:
+          secretName: {{ template "dex-k8s-authenticator.fullname" $ }}-tls
 {{- end }}

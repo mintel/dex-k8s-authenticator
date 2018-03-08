@@ -11,10 +11,15 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - port: {{ .Values.service.port }}
-    targetPort: http
+  - name: http
+    port: 80
+    targetPort: 5556
     protocol: TCP
-    name: http
+  - name: https
+    port: 443
+    targetPort: 5556
+    protocol: TCP
+
   selector:
     app: {{ template "dex.name" . }}
     release: {{ .Release.Name }}

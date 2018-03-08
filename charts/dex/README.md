@@ -11,10 +11,18 @@ If you want an easy way to issue and install `kubectl` credentials, then you sho
 install [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator). There
 is a `helm` chart available for that too (in its repo).
 
+## SSL - Self-managed certs
+
+* Populate `tls.certificate` and `tls.key` with b64encoded values.
+* Set `tls.create: true` to create secrets - the k8s deployment will mount these in the correct place and servce requests on https.
+* Uncomment `web.https`, `web.tlsCert` and `web.tlsKey` options
+* Remove `web.http` option (TODO, check this)
+
 ```
 # Default values for dex
 
-# Deploy environment label, e.g. dev, test, prod
+
+```
 global:
   deployEnv: dev
 
@@ -27,7 +35,19 @@ image:
 
 service:
   type: ClusterIP
-  port: 5556
+
+tls:
+  # Specify whether a TLS secret for Dex should be created
+  # The provided certificate and key values are used to populate the
+  # tlsCert and tlsKey values in the Dex configuration.
+  #
+  # If set to true, be sure to update the listen directive in the Dex
+  # configuration to use https.
+  create: false
+
+  # Provide base64 encoded values for certificate and key
+  certificate:
+  key:
 
 ingress:
   enabled: false
@@ -42,14 +62,16 @@ ingress:
   #    hosts:
   #      - dex.example.com
 
-# rbac will use the 'default' Service Account if 'serviceAccount.create' is false
 rbac:
+  # Specifies whether RBAC resources should be created
   create: true
 
 serviceAccount:
+  # Specifies whether a ServiceAccount should be created
   create: true
-  # Service Account name defaults to an automatically generated name
-  #name: "custom-name"
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -83,6 +105,10 @@ config: |-
 
   web:
     http: 0.0.0.0:5556
+    # https: 0.0.0.0:5556
+    # tlsCert: /etc/dex/tls/dex.crt
+    # tlsKey: /etc/dex/tls/dex.key
+
 
   frontend:
     theme: "coreos"
@@ -196,7 +222,7 @@ config: |-
     redirectURIs:
     - https://login.example.com/callback/my-cluster
   
-  enablePasswordDB: False
+  enablePasswordDB: True
   staticPasswords:
   - email: "admin@example.com"
     # bcrypt hash of the string "password"

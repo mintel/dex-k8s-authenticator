@@ -11,10 +11,10 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - name: web
+      port: {{ default "80" .Values.service.port }}
+      targetPort: {{ default "5555" .Values.dexK8sAuthenticator.port }}
       protocol: TCP
-      name: http
   selector:
     app: {{ template "dex-k8s-authenticator.name" . }}
     release: {{ .Release.Name }}

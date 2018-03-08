@@ -11,14 +11,14 @@ metadata:
 data:
   config.yaml: |-
     {{- with .Values.dexK8sAuthenticator }}
-    listen: http://0.0.0.0:{{ default "5555" .port }}
+    listen: {{ if .tls.create }}https{{ else }}http{{ end }}://0.0.0.0:{{ default "5555" .port }}
     debug: {{ default "false" .debug }}
     {{- if .logoUrl }}
     logo_uri: {{ .logoUrl }}
     {{- end }}
-    {{- if and .tlsCert .tlsKey }} 
-    tls_cert: "{{ .tlsCert }}"
-    tls_key: "{{ .tlsKey }}"
+    {{- if and .tls.create .tlsCert .tlsKey }}
+    tls_cert: "/etc/dex-k8s-authenticator/tls.crt"
+    tls_key: "/etc/dex-k8s-authenticator/tls.key"
     {{- end }}
     clusters:
 {{ toYaml .clusters | indent 4 }}
