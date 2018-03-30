@@ -57,6 +57,7 @@ type Cluster struct {
 	Client_ID         string
 	K8s_Master_URI    string
 	K8s_Ca_URI        string
+	K8s_Ca_Pem        string
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
