@@ -27,6 +27,7 @@ type tokenTmplData struct {
 	ClientID         string
 	K8sMasterURI     string
 	K8sCaURI         string
+	K8sCaPem         string
 	IDPCaURI         string
 	LogoURI          string
 }
@@ -62,6 +63,7 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 		ClientID:         cluster.Client_ID,
 		K8sMasterURI:     cluster.K8s_Master_URI,
 		K8sCaURI:         cluster.K8s_Ca_URI,
+		K8sCaPem:         cluster.K8s_Ca_Pem,
 		IDPCaURI:         idpCaURI,
 		LogoURI:          logoURI}
 
