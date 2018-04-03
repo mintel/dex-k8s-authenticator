@@ -13,10 +13,10 @@ cluster option.
 ### Added
 - Allow self-signed certs to be used
 
-# Changed
+### Changed
 - Bump to golang:1.9.4-alpine3.7
 
-# Fixed
+### Fixed
 - Fixed helm-chart ingress servicePort
 
 ## [v0.2.0] 
