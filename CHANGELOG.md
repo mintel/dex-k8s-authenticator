@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v0.4.0]
+### Added
+- Abililty to provide K8s cert file content in configuration via k8s_ca_pem
+cluster option.
+
+### Fixed
+- Explicitly define the CA certificate path using ${HOME}
+
 ## [v0.3.0]
 ### Added
 - Allow self-signed certs to be used
