@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -10,6 +12,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/coreos/go-oidc"
@@ -75,6 +78,17 @@ type Config struct {
 	TLS_Key    string
 	IDP_Ca_URI string
 	Logo_Uri   string
+}
+
+func substituteEnvVars(text string) string {
+	re := regexp.MustCompile("\\${([a-zA-Z0-9\\-_]+)}")
+	matches := re.FindAllStringSubmatch(text, -1)
+	for _, val := range matches {
+		envVar := os.Getenv(val[1])
+		// fmt.Printf("%q %q %q\n", val[0], val[1], envVar)
+		text = strings.Replace(text, val[0], envVar, -1)
+	}
+	return text
 }
 
 // Start the app
@@ -207,8 +221,7 @@ var RootCmd = &cobra.Command{
 func initConfig() {
 
 	if config_file != "" {
-		viper.SetConfigFile(config_file)
-
+		//viper.SetConfigFile(config_file)
 		// get the filepath
 		abs, err := filepath.Abs(config_file)
 		if err != nil {
@@ -224,10 +237,15 @@ func initConfig() {
 		viper.SetConfigName(strings.Split(base, ".")[0])
 		viper.AddConfigPath(path)
 
-		// Find and read the config file; Handle errors reading the config file
-		if err := viper.ReadInConfig(); err != nil {
+		config, err := ioutil.ReadFile(config_file)
+		if err != nil {
 			log.Fatalf("Error reading config file, %s", err)
 		}
+
+		origConfigStr := bytes.NewBuffer(config).String()
+		configDataString := substituteEnvVars(origConfigStr)
+
+		viper.ReadConfig(bytes.NewBufferString(configDataString))
 
 		log.Printf("Using config file:", viper.ConfigFileUsed())
 	}
