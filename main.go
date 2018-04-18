@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -196,6 +197,53 @@ func start_app(config Config) {
 	}
 }
 
+func substituteEnvVarsRecursive(copy, original reflect.Value) {
+	switch original.Kind() {
+
+	case reflect.Ptr:
+		originalValue := original.Elem()
+		if !originalValue.IsValid() {
+			return
+		}
+		copy.Set(reflect.New(originalValue.Type()))
+		substituteEnvVarsRecursive(copy.Elem(), originalValue)
+
+	case reflect.Interface:
+		originalValue := original.Elem()
+		copyValue := reflect.New(originalValue.Type()).Elem()
+		substituteEnvVarsRecursive(copyValue, originalValue)
+		copy.Set(copyValue)
+
+	case reflect.Struct:
+		for i := 0; i < original.NumField(); i += 1 {
+			substituteEnvVarsRecursive(copy.Field(i), original.Field(i))
+		}
+
+	case reflect.Slice:
+		copy.Set(reflect.MakeSlice(original.Type(), original.Len(), original.Cap()))
+		for i := 0; i < original.Len(); i += 1 {
+			substituteEnvVarsRecursive(copy.Index(i), original.Index(i))
+		}
+
+	case reflect.Map:
+		copy.Set(reflect.MakeMap(original.Type()))
+		for _, key := range original.MapKeys() {
+			originalValue := original.MapIndex(key)
+			copyValue := reflect.New(originalValue.Type()).Elem()
+			substituteEnvVarsRecursive(copyValue, originalValue)
+			copy.SetMapIndex(key, copyValue)
+		}
+
+	case reflect.String:
+		replacedString := substituteEnvVars(original.Interface().(string))
+		copy.SetString(replacedString)
+
+	default:
+		copy.Set(original)
+	}
+
+}
+
 var RootCmd = &cobra.Command{
 	Use:   "dex-k8s-authenticator",
 	Short: "Dex Kubernetes Authenticator",
@@ -208,8 +256,12 @@ var RootCmd = &cobra.Command{
 			log.Fatalf("Unable to decode configuration into struct, %v", err)
 		}
 
+		original := reflect.ValueOf(config)
+		copy := reflect.New(original.Type()).Elem()
+		substituteEnvVarsRecursive(copy, original)
+
 		// Start the app
-		start_app(config)
+		start_app(copy.Interface().(Config))
 
 		// Fallback if no args specified
 		cmd.HelpFunc()(cmd, args)
@@ -243,9 +295,7 @@ func initConfig() {
 		}
 
 		origConfigStr := bytes.NewBuffer(config).String()
-		configDataString := substituteEnvVars(origConfigStr)
-
-		viper.ReadConfig(bytes.NewBufferString(configDataString))
+		viper.ReadConfig(bytes.NewBufferString(origConfigStr))
 
 		log.Printf("Using config file:", viper.ConfigFileUsed())
 	}
