@@ -4,6 +4,16 @@
 
 body {
   margin: 0;
+  font-family: Arial;
+}
+
+h3 { font-size: 16px; }
+
+pre {
+  background-color: #eff0f1;
+  padding: 5px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .dex-container {
@@ -21,7 +31,6 @@ body {
   min-width: 320px;
   text-align: left;
 }
-
 
 .dex-btn {
   border-radius: 4px;
@@ -57,7 +66,6 @@ body {
   background-image: url(/static/button.svg);
 }
 
-
 .dex-btn-text {
   font-weight: 600;
   line-height: 36px;
@@ -82,10 +90,13 @@ body {
   margin: 20px auto;
 }
 
-pre {
-  background-color: #eff0f1;
-  margin: 5px;
-  padding: 5px;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
+div.groups {
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  margin-bottom: 15px;
 }
+
+div.command {
+margin-top: 15px;
+}
+

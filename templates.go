@@ -5,16 +5,20 @@ package main
 import (
 	"encoding/json"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
 )
+
+// compile all templates and cache them
+var templates = template.Must(template.ParseGlob("./templates/*.html"))
 
 func renderIndex(w http.ResponseWriter, config *Config) {
 	t, _ := template.ParseFiles("./templates/index.html")
 	t.Execute(w, config)
 }
 
-type tokenTmplData struct {
+type templateData struct {
 	IDToken          string
 	RefreshToken     string
 	RedirectURL      string
@@ -30,6 +34,7 @@ type tokenTmplData struct {
 	K8sCaPem         string
 	IDPCaURI         string
 	LogoURI          string
+	KubectlVersion   string
 }
 
 func (cluster *Cluster) renderToken(w http.ResponseWriter,
@@ -37,6 +42,7 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	refreshToken string,
 	idpCaURI string,
 	logoURI string,
+	kubectlVersion string,
 	claims []byte) {
 
 	var data map[string]interface{}
@@ -48,9 +54,7 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	email := data["email"].(string)
 	unix_username := strings.Split(email, "@")[0]
 
-	t, _ := template.ParseFiles("./templates/kubeconfig.html")
-
-	token_data := tokenTmplData{
+	token_data := templateData{
 		IDToken:          idToken,
 		RefreshToken:     refreshToken,
 		RedirectURL:      cluster.Redirect_URI,
@@ -65,8 +69,12 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 		K8sCaURI:         cluster.K8s_Ca_URI,
 		K8sCaPem:         cluster.K8s_Ca_Pem,
 		IDPCaURI:         idpCaURI,
-		LogoURI:          logoURI}
+		LogoURI:          logoURI,
+		KubectlVersion:   kubectlVersion}
 
-	t.Execute(w, token_data)
+	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)
 
+	if err != nil {
+		log.Fatal("Cannot Get View ", err)
+	}
 }
