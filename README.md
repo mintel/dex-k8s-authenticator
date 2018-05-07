@@ -24,6 +24,20 @@ Creates ./bin/dex-k8s-authenticator
 
     make container
 
+## Configuraton
+
+An example configuration is available [here](examples/config.yaml)
+
+Configuration also supports environment variables to be used for cluster configuration.
+
+```
+clusters:
+  - name: example-cluster
+    short_description: "Example Cluster"
+    description: "Example Cluster Long Description..."
+    client_secret: ${CLIENT_SECRET_EXAMPLE_CLUSTER}
+```
+
 ## Running 
 
 ### Start Dex Server instance
