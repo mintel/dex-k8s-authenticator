@@ -66,7 +66,7 @@ Mount a directory containing your self signed certificates to */certs* and the e
 
 ### HELM
 
-Add list of Certificates to your values.yaml file, certificates need to be base64 encoded and their names need to end with either ".crt" or ".pem"
+Add list of Certificates to your values.yaml file, certificates need to be base64 encoded. Certificates must have a .crt extension in order to be included by update-ca-certificates.
 
 
 ## Alternatives
