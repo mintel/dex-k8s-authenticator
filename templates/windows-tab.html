@@ -26,7 +26,7 @@
         <img class="clippy" width="13" src="/static/clippy.svg" alt=""/>
       </button>
 
-      <pre><code>curl --create-dirs -s {{ .IDPCaURI }} -o ~/.kube/certs/{{ .ClusterName }}/idp-ca.crt</code></pre>
+      <pre><code>curl --create-dirs -s {{ .IDPCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt</code></pre>
     </div>
   {{ end }}
 
