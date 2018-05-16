@@ -14,7 +14,10 @@ FROM alpine:3.7
 # OpenSSL is required so wget can query HTTPS endpoints for health checking.
 RUN apk add --update ca-certificates openssl curl
 
-COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator /app
+RUN mkdir -p /app/bin
+COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator/bin/dex-k8s-authenticator /app/bin/dex-k8s-authenticator
+COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator/html /app/html
+COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator/templates /app/templates
 
 # Add any required certs/key by mounting a volume on /certs - Entrypoint will copy them and run update-ca-certificates at startup
 RUN mkdir -p /certs
