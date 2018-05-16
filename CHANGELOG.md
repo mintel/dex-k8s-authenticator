@@ -20,6 +20,7 @@ environment (useful for the `client_secret`).
 due to breaking naming conventions on and Secret and Volume resources.
 Introduce a required `filename` option which lets us separate out the filename
 of the cert and the name of the k8s resource created.
+- Slim down final docker container size 
 
 ### Fixed
 - `update-ca-certificates` only accepts *.crt (only attempt to copy these)
