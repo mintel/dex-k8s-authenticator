@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -75,10 +77,11 @@ type Config struct {
 	Clusters []Cluster
 	Listen   string
 
-	TLS_Cert   string
-	TLS_Key    string
-	IDP_Ca_URI string
-	Logo_Uri   string
+	TLS_Cert        string
+	TLS_Key         string
+	IDP_Ca_URI      string
+	Logo_Uri        string
+	Trusted_Root_Ca []string
 }
 
 func substituteEnvVars(text string) string {
@@ -86,7 +89,6 @@ func substituteEnvVars(text string) string {
 	matches := re.FindAllStringSubmatch(text, -1)
 	for _, val := range matches {
 		envVar := os.Getenv(val[1])
-		// fmt.Printf("%q %q %q\n", val[0], val[1], envVar)
 		text = strings.Replace(text, val[0], envVar, -1)
 	}
 	return text
@@ -108,19 +110,37 @@ func start_app(config Config) {
 		ScopesSupported []string `json:"scopes_supported"`
 	}
 
+	certp, err := x509.SystemCertPool()
+	for _, cert := range config.Trusted_Root_Ca {
+		ok := certp.AppendCertsFromPEM([]byte(cert))
+		if !ok {
+			log.Fatalf("Failed to parse a trusted cert, pem format expected")
+		}
+	}
+
+	mTlsConfig := &tls.Config{}
+	mTlsConfig.PreferServerCipherSuites = true
+	mTlsConfig.MinVersion = tls.VersionTLS10
+	mTlsConfig.MaxVersion = tls.VersionTLS12
+	mTlsConfig.RootCAs = certp
+
+	tr := &http.Transport{
+		TLSClientConfig: mTlsConfig,
+	}
+
 	// Generate handlers for each cluster
 	for i, _ := range config.Clusters {
 		cluster := config.Clusters[i]
 		if debug {
 			if cluster.Client == nil {
 				cluster.Client = &http.Client{
-					Transport: debugTransport{http.DefaultTransport},
+					Transport: debugTransport{tr},
 				}
 			} else {
-				cluster.Client.Transport = debugTransport{cluster.Client.Transport}
+				cluster.Client.Transport = debugTransport{tr}
 			}
 		} else {
-			cluster.Client = http.DefaultClient
+			cluster.Client = &http.Client{Transport: tr}
 		}
 
 		ctx := oidc.ClientContext(context.Background(), cluster.Client)
@@ -259,6 +279,7 @@ var RootCmd = &cobra.Command{
 		original := reflect.ValueOf(config)
 		copy := reflect.New(original.Type()).Elem()
 		substituteEnvVarsRecursive(copy, original)
+
 
 		// Start the app
 		start_app(copy.Interface().(Config))
