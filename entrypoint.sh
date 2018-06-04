@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! -z "$(ls -A /certs)" ]; then
-  cp -L /certs/*.crt /certs/*.pem /usr/local/share/ca-certificates/ 2>/dev/null
+  cp -L /certs/*.crt /usr/local/share/ca-certificates/ 2>/dev/null
   update-ca-certificates
 fi
 
