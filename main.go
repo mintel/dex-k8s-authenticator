@@ -208,10 +208,13 @@ func start_app(config Config) {
 	switch listenURL.Scheme {
 	case "http":
 		log.Printf("Listening on %s", config.Listen)
-		http.ListenAndServe(listenURL.Host, nil)
+		err := http.ListenAndServe(listenURL.Host, nil)
+		log.Fatal(err)
 	case "https":
 		log.Printf("Listening on %s", config.Listen)
-		http.ListenAndServeTLS(listenURL.Host, config.TLS_Cert, config.TLS_Key, nil)
+		err := http.ListenAndServeTLS(listenURL.Host, config.TLS_Cert, config.TLS_Key, nil)
+		log.Fatal(err)
+
 	default:
 		fmt.Errorf("Listen address %q is not using http or https", config.Listen)
 	}
@@ -279,7 +282,6 @@ var RootCmd = &cobra.Command{
 		original := reflect.ValueOf(config)
 		copy := reflect.New(original.Type()).Elem()
 		substituteEnvVarsRecursive(copy, original)
-
 
 		// Start the app
 		start_app(copy.Interface().(Config))
