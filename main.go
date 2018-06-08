@@ -74,9 +74,9 @@ type Cluster struct {
 
 // Define our configuration
 type Config struct {
-	Clusters []Cluster
-	Listen   string
-
+	Clusters        []Cluster
+	Listen          string
+	Web_Path_Prefix string
 	TLS_Cert        string
 	TLS_Key         string
 	IDP_Ca_URI      string
@@ -188,21 +188,23 @@ func start_app(config Config) {
 		}
 
 		// Each cluster gets a different login and callback URL
-		callback_uri := path.Join(base_redirect_uri.Path)
-		http.HandleFunc(callback_uri, cluster.handleCallback)
-		log.Printf("Registered callback handler at: %s", callback_uri)
+		http.HandleFunc(base_redirect_uri.Path, cluster.handleCallback)
+		log.Printf("Registered callback handler at: %s", base_redirect_uri.Path)
 
-		login_uri := path.Join("/login", cluster.Name)
+		login_uri := path.Join(config.Web_Path_Prefix, "login", cluster.Name)
 		http.HandleFunc(login_uri, cluster.handleLogin)
-		log.Printf("Registered login handler at: /login/%s", cluster.Name)
+		log.Printf("Registered login handler at: %s", login_uri)
 	}
 
 	// Index page
-	http.HandleFunc("/", config.handleIndex)
+	http.HandleFunc(config.Web_Path_Prefix, config.handleIndex)
 
 	// Serve static html assets
-	fs := http.FileServer(http.Dir("html/static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	fs := http.FileServer(http.Dir("html/static/"))
+	static_uri := path.Join(config.Web_Path_Prefix, "static") + "/"
+	log.Printf("Registered static assets handler at: %s", static_uri)
+
+	http.Handle(static_uri, http.StripPrefix(static_uri, fs))
 
 	// Determine whether to use TLS or not
 	switch listenURL.Scheme {
@@ -311,6 +313,7 @@ func initConfig() {
 
 		viper.SetConfigName(strings.Split(base, ".")[0])
 		viper.AddConfigPath(path)
+		viper.SetDefault("web_path_prefix", "/")
 
 		config, err := ioutil.ReadFile(config_file)
 		if err != nil {

@@ -34,7 +34,7 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	scopes = append(scopes, "openid", "profile", "email", "offline_access", "groups")
 
-	log.Printf("Handling /login for: %s", cluster.Name)
+	log.Printf("Handling login-uri for: %s", cluster.Name)
 	authCodeURL := cluster.oauth2Config(scopes).AuthCodeURL(exampleAppState, oauth2.AccessTypeOffline)
 	log.Printf("Redirecting post-loginto: %s", authCodeURL)
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
@@ -109,6 +109,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	cluster.renderToken(w, rawIDToken, token.RefreshToken,
 		viper.GetString("idp_ca_uri"),
 		viper.GetString("logo_uri"),
+		viper.GetString("web_path_prefix"),
 		viper.GetString("kubectl_version"),
 		buff.Bytes())
 }

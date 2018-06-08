@@ -33,11 +33,11 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            path: /
+            path: {{ .Values.dexK8sAuthenticator.web_path_prefix }}
             port: http
         readinessProbe:
           httpGet:
-            path: /
+            path: {{ .Values.dexK8sAuthenticator.web_path_prefix }}
             port: http
         volumeMounts:
         - name: config
