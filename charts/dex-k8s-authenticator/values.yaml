@@ -14,6 +14,7 @@ image:
 dexK8sAuthenticator:
   port: 5555
   debug: false
+  web_path_prefix: /
   #logoUrl: http://<path-to-your-logo.png>
   #tlsCert: /path/to/dex-client.crt
   #tlsKey: /path/to/dex-client.key

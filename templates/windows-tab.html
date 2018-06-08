@@ -23,7 +23,7 @@
     <div class="command">
       
       <button class="btn" style="float:right" data-clipboard-snippet="">
-        <img class="clippy" width="13" src="/static/clippy.svg" alt=""/>
+        <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
 
       <pre><code>curl --create-dirs -s {{ .IDPCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt</code></pre>
@@ -37,7 +37,7 @@
     <div class="command">
 
       <button class="btn" style="float: right" data-clipboard-snippet="">
-        <img class="clippy" width="13" src="/static/clippy.svg" alt=""/>
+        <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
       <pre><code>curl --create-dirs -s {{ .K8sCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/k8s-ca.crt</code></pre>
     </div>
@@ -51,7 +51,7 @@
     <div class="command">
       
       <button class="btn" style="float:right" data-clipboard-snippet="">
-        <img class="clippy" width="13" src="/static/clippy.svg" alt=""/>
+        <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
       <pre><code>mkdir -p ${HOME}/.kube/certs/{{ .ClusterName }}/ &amp;&amp; cat &lt;&lt; EOF &gt; ${HOME}/.kube/certs/{{ .ClusterName }}/k8s-ca.crt
 {{ .K8sCaPem }}
@@ -66,7 +66,7 @@ EOF</code></pre>
   <div class="command">
 
     <button class="btn" style="float:right" data-clipboard-snippet="">
-      <img class="clippy" width="13" src="/static/clippy.svg" alt="">
+      <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
   <pre><code>kubectl config set-cluster {{ .ClientID }} --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt --server={{ .K8sMasterURI }}</code></pre>
   </div>
@@ -74,7 +74,7 @@ EOF</code></pre>
   <div class="command">
 
     <button class="btn" style="float:right" data-clipboard-snippet="">
-      <img class="clippy" width="13" src="/static/clippy.svg" alt=""/>
+      <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
   <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClientID }} --auth-provider=oidc --auth-provider-arg=idp-issuer-url={{ .Issuer }} --auth-provider-arg=client-id={{ .ClientID }} --auth-provider-arg=client-secret={{ .ClientSecret }} --auth-provider-arg=refresh-token={{ .RefreshToken }} --auth-provider-arg=id-token={{ .IDToken }}
   {{- if .IDPCaURI }} --auth-provider-arg=idp-certificate-authority=${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
@@ -84,14 +84,14 @@ EOF</code></pre>
   <div class="command">
 
     <button class="btn" style="float:right" data-clipboard-snippet="">
-      <img class="clippy" width="13" src="/static/clippy.svg" alt="">
+      <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
     <pre><code class="hljs">kubectl config set-context {{ .Username }}-{{ .ClientID }} --cluster={{ .ClientID }} --user={{ .Username}}-{{.ClientID }}</code></pre>
   </div>
 
   <div class="command">
     <button class="btn" style="float:right" data-clipboard-snippet="">
-      <img class="clippy" width="13" src="/static/clippy.svg" alt=""/>
+      <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
     <pre><code class="hljs">kubectl config use-context {{ .Username }}-{{ .ClientID}}</code></pre>          
   </div>           
