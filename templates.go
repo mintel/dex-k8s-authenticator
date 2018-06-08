@@ -15,7 +15,11 @@ var templates = template.Must(template.ParseGlob("./templates/*.html"))
 
 func renderIndex(w http.ResponseWriter, config *Config) {
 	t, _ := template.ParseFiles("./templates/index.html")
-	t.Execute(w, config)
+	err := t.Execute(w, config)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 type templateData struct {
@@ -75,6 +79,6 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)
 
 	if err != nil {
-		log.Fatal("Cannot Get View ", err)
+		log.Fatal(err)
 	}
 }
