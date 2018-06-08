@@ -216,7 +216,7 @@ func start_app(config Config) {
 		log.Fatal(err)
 
 	default:
-		fmt.Errorf("Listen address %q is not using http or https", config.Listen)
+		log.Fatalf("Listen address %q is not using http or https", config.Listen)
 	}
 }
 
