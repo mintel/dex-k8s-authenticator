@@ -46,8 +46,7 @@ spec:
 {{- if .Values.caCerts.enabled }}
 {{- range .Values.caCerts.secrets }}
         - name: {{ template "dex-k8s-authenticator.fullname" $ }}-{{ .name }}
-          subPath: {{ .filename }}
-          mountPath: /certs/{{ .filename }}
+          mountPath: /certs/{{ .name }}
 {{- end }}
 {{- end }}
         resources:

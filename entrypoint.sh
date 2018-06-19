@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! -z "$(ls -A /certs)" ]; then
-  cp -L /certs/*.crt /usr/local/share/ca-certificates/ 2>/dev/null
+  find /certs/ -type f -exec sh -c 'cp -v -L '{}' /usr/local/share/ca-certificates/$(basename '{}').crt' \;
   update-ca-certificates
 fi
 
