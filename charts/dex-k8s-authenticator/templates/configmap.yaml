@@ -17,6 +17,9 @@ data:
     {{- if .logoUrl }}
     logo_uri: {{ .logoUrl }}
     {{- end }}
+    {{- if .idpCaURI }}
+    idp_ca_uri: {{ .idpCaURI }}
+    {{- end }}
     {{- if and .tlsCert .tlsKey }} 
     tls_cert: "{{ .tlsCert }}"
     tls_key: "{{ .tlsKey }}"

@@ -1,4 +1,10 @@
+{{- if semverCompare ">= 1.9-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: apps/v1
+{{- else if semverCompare ">= 1.8-0, <= 1.9-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: apps/v1beta2
+{{- else -}}
+apiVersion: apps/v1beta1
+{{- end }}
 kind: Deployment
 metadata:
   name: {{ template "dex.fullname" . }}
@@ -35,6 +41,11 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
+{{- if .Values.tls.create }}
+      - name: tls
+        secret:
+          secretName: {{ template "dex.fullname" $ }}-tls
+{{- end }}
       serviceAccountName: {{ template "dex.serviceAccountName" . }}
       containers:
       - name: {{ .Chart.Name }}
@@ -57,11 +68,25 @@ spec:
           httpGet:
             path: /healthz
             port: 5556
+          {{- if .Values.tls.create }}
+            scheme: HTTPS
+          {{- end }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 5556
+          {{- if .Values.tls.create }}
+            scheme: HTTPS
+          {{- end }}
           initialDelaySeconds: 5
           timeoutSeconds: 1
         volumeMounts:
         - name: config
           mountPath: /etc/dex
+{{- if .Values.tls.create }}
+        - name: tls
+          mountPath: /etc/dex/tls
+{{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
     {{- with .Values.nodeSelector }}
