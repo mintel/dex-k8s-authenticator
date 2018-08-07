@@ -196,6 +196,13 @@ func start_app(config Config) {
 		log.Printf("Registered login handler at: %s", login_uri)
 	}
 
+	// Ensure trailing slash on web-path-prefix
+	web_path_prefix := config.Web_Path_Prefix
+	if web_path_prefix != "/" {
+		web_path_prefix = fmt.Sprintf("%s/", path.Clean(web_path_prefix))
+		config.Web_Path_Prefix = web_path_prefix
+	}
+
 	// Index page
 	http.HandleFunc(config.Web_Path_Prefix, config.handleIndex)
 
