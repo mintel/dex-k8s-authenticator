@@ -107,9 +107,9 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	json.Indent(buff, []byte(claims), "", "  ")
 
 	cluster.renderToken(w, rawIDToken, token.RefreshToken,
-		viper.GetString("idp_ca_uri"),
-		viper.GetString("logo_uri"),
-		viper.GetString("web_path_prefix"),
+		cluster.Config.IDP_Ca_URI,
+		cluster.Config.Logo_Uri,
+		cluster.Config.Web_Path_Prefix,
 		viper.GetString("kubectl_version"),
 		buff.Bytes())
 }

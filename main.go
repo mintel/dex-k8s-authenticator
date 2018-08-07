@@ -70,6 +70,7 @@ type Cluster struct {
 	OfflineAsScope bool
 	Client         *http.Client
 	Redirect_URI   string
+    Config         Config
 }
 
 // Define our configuration
@@ -128,6 +129,13 @@ func start_app(config Config) {
 		TLSClientConfig: mTlsConfig,
 	}
 
+	// Ensure trailing slash on web-path-prefix
+	web_path_prefix := config.Web_Path_Prefix
+	if web_path_prefix != "/" {
+		web_path_prefix = fmt.Sprintf("%s/", path.Clean(web_path_prefix))
+		config.Web_Path_Prefix = web_path_prefix
+	}
+
 	// Generate handlers for each cluster
 	for i, _ := range config.Clusters {
 		cluster := config.Clusters[i]
@@ -180,6 +188,8 @@ func start_app(config Config) {
 			}()
 		}
 
+        cluster.Config = config
+
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 
 		if err != nil {
@@ -194,13 +204,6 @@ func start_app(config Config) {
 		login_uri := path.Join(config.Web_Path_Prefix, "login", cluster.Name)
 		http.HandleFunc(login_uri, cluster.handleLogin)
 		log.Printf("Registered login handler at: %s", login_uri)
-	}
-
-	// Ensure trailing slash on web-path-prefix
-	web_path_prefix := config.Web_Path_Prefix
-	if web_path_prefix != "/" {
-		web_path_prefix = fmt.Sprintf("%s/", path.Clean(web_path_prefix))
-		config.Web_Path_Prefix = web_path_prefix
 	}
 
 	// Index page
