@@ -51,6 +51,6 @@ The `.crt` and `.key` file can be mounted as a volume.
 
 ### dex-k8a-authenticator
 
-Our Helm chart providers options for both using trusted root certs, and serving requests on SSL.
+Our Helm chart provides options for both using trusted root certs, and serving requests on SSL.
 
-For more information on SSL support in our Helm chart, please read [here](../charts/dex-k8s-authenticator)
+For more information on SSL support, please read [here](../charts/dex-k8s-authenticator)
