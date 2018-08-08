@@ -8,7 +8,7 @@ It give uses the information and commands to configure `kubectl` to work with th
 
 You can configure one or more clusters in this chart configuration, for the one or more `dex` installs you may have.
 
-```
+```yaml
 # Default values for dex-k8s-authenticator.
 
 # Deploy environment label, e.g. dev, test, prod
@@ -25,14 +25,16 @@ image:
 dexK8sAuthenticator:
   port: 5555
   debug: false
+  web_path_prefix: /
   #logoUrl: http://<path-to-your-logo.png>
+  #kubectl_version: v1.11.2
   #tlsCert: /path/to/dex-client.crt
   #tlsKey: /path/to/dex-client.key
   clusters:
   - name: my-cluster
     short_description: "My Cluster"
     description: "Example Cluster Long Description..."
-    client_secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+    client_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
     issuer: https://dex.example.com
     k8s_master_uri: https://my-cluster.example.com
     client_id: my-cluster
@@ -67,6 +69,30 @@ resources: {}
   # requests:
   #  cpu: 100m
   #  memory: 128Mi
+
+caCerts: 
+  enabled: false
+  secrets: {}
+  # Array of Self Signed Certificates
+  # cat CA.crt | base64 -w 0
+  #
+  #     name: The internal k8s name of the secret we create. It's also used in 
+  #     the volumeMount name. It must respect the k8s naming convension (avoid 
+  #     upper-case and '.' to be safe).
+  #
+  #     filename: The filename of the CA to be mounted. It must end in .crt for
+  #     update-ca-certificates to work
+  #
+  #     value: The base64 encoded value of the CA
+  #
+  #secrets:
+  #- name: ca-cert1
+  #  filename: ca1.crt
+  #  value: LS0tLS1......X2F
+  #- name: ca-cert2
+  #  filename: ca2.crt
+  #  value: DS1tFA1......X2F
+
 
 nodeSelector: {}
 

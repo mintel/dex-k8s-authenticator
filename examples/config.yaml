@@ -14,6 +14,6 @@ clusters:
 
 web_path_prefix: /
 listen: http://127.0.0.1:5555
-#logo_uri: http://<path-to-your-logo.png>
-kubectl_version: v1.10.2
 debug: false
+kubectl_version: v1.11.2
+#logo_uri: http://<path-to-your-logo.png>
