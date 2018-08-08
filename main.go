@@ -70,13 +70,14 @@ type Cluster struct {
 	OfflineAsScope bool
 	Client         *http.Client
 	Redirect_URI   string
+    Config         Config
 }
 
 // Define our configuration
 type Config struct {
-	Clusters []Cluster
-	Listen   string
-
+	Clusters        []Cluster
+	Listen          string
+	Web_Path_Prefix string
 	TLS_Cert        string
 	TLS_Key         string
 	IDP_Ca_URI      string
@@ -126,6 +127,13 @@ func start_app(config Config) {
 
 	tr := &http.Transport{
 		TLSClientConfig: mTlsConfig,
+	}
+
+	// Ensure trailing slash on web-path-prefix
+	web_path_prefix := config.Web_Path_Prefix
+	if web_path_prefix != "/" {
+		web_path_prefix = fmt.Sprintf("%s/", path.Clean(web_path_prefix))
+		config.Web_Path_Prefix = web_path_prefix
 	}
 
 	// Generate handlers for each cluster
@@ -180,6 +188,8 @@ func start_app(config Config) {
 			}()
 		}
 
+        cluster.Config = config
+
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 
 		if err != nil {
@@ -188,21 +198,23 @@ func start_app(config Config) {
 		}
 
 		// Each cluster gets a different login and callback URL
-		callback_uri := path.Join(base_redirect_uri.Path)
-		http.HandleFunc(callback_uri, cluster.handleCallback)
-		log.Printf("Registered callback handler at: %s", callback_uri)
+		http.HandleFunc(base_redirect_uri.Path, cluster.handleCallback)
+		log.Printf("Registered callback handler at: %s", base_redirect_uri.Path)
 
-		login_uri := path.Join("/login", cluster.Name)
+		login_uri := path.Join(config.Web_Path_Prefix, "login", cluster.Name)
 		http.HandleFunc(login_uri, cluster.handleLogin)
-		log.Printf("Registered login handler at: /login/%s", cluster.Name)
+		log.Printf("Registered login handler at: %s", login_uri)
 	}
 
 	// Index page
-	http.HandleFunc("/", config.handleIndex)
+	http.HandleFunc(config.Web_Path_Prefix, config.handleIndex)
 
 	// Serve static html assets
-	fs := http.FileServer(http.Dir("html/static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	fs := http.FileServer(http.Dir("html/static/"))
+	static_uri := path.Join(config.Web_Path_Prefix, "static") + "/"
+	log.Printf("Registered static assets handler at: %s", static_uri)
+
+	http.Handle(static_uri, http.StripPrefix(static_uri, fs))
 
 	// Determine whether to use TLS or not
 	switch listenURL.Scheme {
@@ -216,7 +228,7 @@ func start_app(config Config) {
 		log.Fatal(err)
 
 	default:
-		fmt.Errorf("Listen address %q is not using http or https", config.Listen)
+		log.Fatalf("Listen address %q is not using http or https", config.Listen)
 	}
 }
 
@@ -311,6 +323,7 @@ func initConfig() {
 
 		viper.SetConfigName(strings.Split(base, ".")[0])
 		viper.AddConfigPath(path)
+		viper.SetDefault("web_path_prefix", "/")
 
 		config, err := ioutil.ReadFile(config_file)
 		if err != nil {

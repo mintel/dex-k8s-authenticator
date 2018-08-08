@@ -12,6 +12,7 @@ clusters:
 #tls_cert: /path/to/dex-client.crt
 #tls_key: /path/to/dex-client.key
 
+web_path_prefix: /
 listen: http://127.0.0.1:5555
 #logo_uri: http://<path-to-your-logo.png>
 kubectl_version: v1.10.2
