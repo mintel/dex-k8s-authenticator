@@ -30,3 +30,30 @@ Create chart name and version as used by the chart label.
 {{- define "dex-k8s-authenticator.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Create the healthCheckPath for readiness and liveness probes.
+
+Based on the following template values:
+    - healthCheckPath
+    - ingress.path
+    - dexK8sAuthenticator.web_path_prefix
+
+The default is '/healthz'
+*/}}
+
+{{- define "dex-k8s-authenticator.healthCheckPath" -}}
+{{- if .Values.healthCheckPath -}}
+  {{ .Values.healthCheckPath }}
+{{- else -}}
+  {{- if .Values.ingress.enabled -}}
+    {{ default "" .Values.ingress.path | trimSuffix "/" }}/healthz
+  {{- else -}}
+    {{- if .Values.dexK8sAuthenticator.web_path_prefix -}}
+      {{ .Values.dexK8sAuthenticator.web_path_prefix | trimSuffix "/" }}/healthz
+    {{- else -}}
+      {{ "/healthz" }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

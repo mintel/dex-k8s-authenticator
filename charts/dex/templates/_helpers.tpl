@@ -43,8 +43,34 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
+Create the health check path
+*/}}
+
+{{/*
 Create secret key from environment variables
 */}}
 {{- define "dex.envkey" -}}
 {{ . | replace "_" "-" | lower }}
+{{- end -}}
+
+{{/*
+Create the healthCheckPath for readiness and liveness probes.
+
+Based on the following template values:
+    - healthCheckPath
+    - ingress.path
+
+The default is '/healthz'
+*/}}
+
+{{- define "dex.healthCheckPath" -}}
+{{- if .Values.healthCheckPath -}}
+  {{ .Values.healthCheckPath }}
+{{- else -}}
+  {{- if .Values.ingress.enabled -}}
+    {{ default "" .Values.ingress.path | trimSuffix "/" }}/healthz
+  {{- else -}}
+    {{ default "/healthz" }}
+  {{- end -}}
+{{- end -}}
 {{- end -}}
