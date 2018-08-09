@@ -1,4 +1,5 @@
 clusters:
+  # Specify 1 or more clusters
   - name: example-cluster
 
     # Descriptions used in the WebUI
