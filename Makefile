@@ -2,7 +2,7 @@ GOPATH=$(shell pwd)/vendor:$(shell pwd)
 GOBIN=$(shell pwd)/bin
 GOFILES=$(wildcard *.go)
 GONAME=dex-k8s-authenticator
-TAG=0.4.0
+TAG=latest
 
 all: build 
 
