@@ -42,8 +42,8 @@ clusters:
 # trusted_root_ca: 
 #   -|
 #     -----BEGIN CERTIFICATE-----
-#     ..
-#    -----END CERTIFICATE-----
+#     ...
+#     -----END CERTIFICATE-----
 
 # Specify path to tls_cert and tls_key - if enabled, set liten to use https
 # tls_cert: /path/to/dex-client.crt
