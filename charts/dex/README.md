@@ -11,7 +11,8 @@ If you want an easy way to issue and install `kubectl` credentials, then you sho
 install [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator). There
 is a `helm` chart available for that too (in its repo).
 
-```
+
+```yaml
 # Default values for dex
 
 # Deploy environment label, e.g. dev, test, prod
@@ -22,13 +23,33 @@ replicaCount: 1
 
 image:
   repository: quay.io/coreos/dex
-  tag: v2.9.0
+  tag: v2.10.0
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
   port: 5556
 
+tls:
+  # Specify whether a TLS secret for Dex should be created
+  # The provided certificate and key values are used to populate the
+  # tlsCert and tlsKey values in the Dex configuration.
+  #
+  # If set to true, be sure to update the listen directive in the Dex
+  # configuration to use https.
+  create: false
+
+  # Provide values for certificate and key
+  # certificate: |-
+  #   -----BEGIN CERTIFICATE-----
+  #    ...
+  #    ----END CERTIFICATE-----
+  #
+  # key: |-
+  #   -----BEGIN RSA PRIVATE KEY-----
+  #   ...
+  #   -----END RSA PRIVATE KEY-----
+ 
 ingress:
   enabled: false
   annotations: {}
@@ -42,14 +63,16 @@ ingress:
   #    hosts:
   #      - dex.example.com
 
-# rbac will use the 'default' Service Account if 'serviceAccount.create' is false
 rbac:
+  # Specifies whether RBAC resources should be created
   create: true
 
 serviceAccount:
+  # Specifies whether a ServiceAccount should be created
   create: true
-  # Service Account name defaults to an automatically generated name
-  #name: "custom-name"
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -83,6 +106,15 @@ config: |-
 
   web:
     http: 0.0.0.0:5556
+
+    # If enabled, be sure to configure tls settings above, or use a tool
+    # such as let-encrypt to manage the certs.
+    # Currently this chart does not support both http and https, and the port
+    # is fixed to 5556
+    #
+    # https: 0.0.0.0:5556
+    # tlsCert: /etc/dex/tls/tls.crt
+    # tlsKey: /etc/dex/tls/tls.key
 
   frontend:
     theme: "coreos"
@@ -196,7 +228,7 @@ config: |-
     redirectURIs:
     - https://login.example.com/callback/my-cluster
   
-  enablePasswordDB: False
+  enablePasswordDB: True
   staticPasswords:
   - email: "admin@example.com"
     # bcrypt hash of the string "password"
