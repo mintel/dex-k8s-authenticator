@@ -45,7 +45,7 @@ tls_key: /path/to/dex-client.key
 - Note, the `listen` option is using `https` not `http`
 - You need to supply both `.crt` and the `.key` files
 
-The `.crt` and `.key` file can be mounted as a volume.
+The `.crt` and `.key` file can be mounted as files in a volume.
 
 ## Helm Charts
 

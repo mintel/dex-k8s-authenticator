@@ -100,3 +100,19 @@ tolerations: []
 
 affinity: {}
 ```
+
+## SSL
+
+Additional reading [here](./ssl.md)
+
+### Adding Trusted Certs
+
+Multiple trusted certs can be added using the `caCerts` option. Make sure to `base64` encode each CA.
+
+### Service Requests on SSL
+
+Define the filepath to your cert and key using the following options in your helm chart.
+  - `dexK8sAuthenticator.tlsCert`
+  - `dexK8sAuthenticator.tlsKey`
+
+TODO: Requires more work as we don't have a way deploy self-signed certs or change to https scheme.
