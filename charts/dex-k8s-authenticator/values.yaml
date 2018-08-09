@@ -58,14 +58,14 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
-caCerts: 
+caCerts:
   enabled: false
   secrets: {}
   # Array of Self Signed Certificates
   # cat CA.crt | base64 -w 0
   #
-  #     name: The internal k8s name of the secret we create. It's also used in 
-  #     the volumeMount name. It must respect the k8s naming convension (avoid 
+  #     name: The internal k8s name of the secret we create. It's also used in
+  #     the volumeMount name. It must respect the k8s naming convension (avoid
   #     upper-case and '.' to be safe).
   #
   #     filename: The filename of the CA to be mounted. It must end in .crt for
