@@ -33,6 +33,10 @@ service:
   type: ClusterIP
   port: 5555
 
+  # For nodeport, specify the following:
+  #   type: NodePort
+  #   nodePort: <port-number>
+
 ingress:
   enabled: false
   annotations: {}
