@@ -15,6 +15,9 @@ spec:
     targetPort: http
     protocol: TCP
     name: http
+{{- if and  .Values.service.nodePort (eq "NodePort" .Values.service.type) }}
+    nodePort: {{ .Values.service.nodePort }}
+{{- end }}
   selector:
     app: {{ template "dex.name" . }}
     release: {{ .Release.Name }}
