@@ -66,14 +66,14 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            path: /healthz
+            path: {{ template "dex.healthCheckPath" . }}
             port: 5556
           {{- if .Values.tls.create }}
             scheme: HTTPS
           {{- end }}
         readinessProbe:
           httpGet:
-            path: /healthz
+            path: {{ template "dex.healthCheckPath" . }}
             port: 5556
           {{- if .Values.tls.create }}
             scheme: HTTPS

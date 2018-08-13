@@ -39,11 +39,11 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            path: {{ .Values.dexK8sAuthenticator.web_path_prefix }}
+            path: {{ template "dex-k8s-authenticator.healthCheckPath" . }}
             port: http
         readinessProbe:
           httpGet:
-            path: {{ .Values.dexK8sAuthenticator.web_path_prefix }}
+            path: {{ template "dex-k8s-authenticator.healthCheckPath" . }}
             port: http
         volumeMounts:
         - name: config
