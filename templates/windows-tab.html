@@ -1,7 +1,7 @@
 {{ define "windows-tab-content" }}
 <h3>Install and Set Up kubectl</h3>
     <div>
-    See 
+    See
     <a title="Install and setup kubectl" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">
       https://kubernetes.io/docs/tasks/tools/install-kubectl
     </a>
@@ -21,7 +21,7 @@
 
     <p>Copy this CA Certificate and download it to your .kube directory</p>
     <div class="command">
-      
+
       <button class="btn" style="float:right" data-clipboard-snippet="">
         <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
@@ -47,9 +47,9 @@
     <h3>Copy Kubernetes CA Certificate From PEM</h3>
 
     <p>Put the CA Certificate into your .kube directory</p>
-      
+
     <div class="command">
-      
+
       <button class="btn" style="float:right" data-clipboard-snippet="">
         <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
@@ -58,17 +58,17 @@
 EOF</code></pre>
     </div>
   {{ end }}
-      
+
   <h3>Run configuration commands</h3>
 
   <p>These commands will update <tt>~/.kube/config</tt></p>
-  
+
   <div class="command">
 
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
-  <pre><code>kubectl config set-cluster {{ .ClientID }} --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt --server={{ .K8sMasterURI }}</code></pre>
+  <pre><code>kubectl config set-cluster {{ .ClusterName }} --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt --server={{ .K8sMasterURI }}</code></pre>
   </div>
 
   <div class="command">
@@ -76,7 +76,7 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
-  <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClientID }} --auth-provider=oidc --auth-provider-arg=idp-issuer-url={{ .Issuer }} --auth-provider-arg=client-id={{ .ClientID }} --auth-provider-arg=client-secret={{ .ClientSecret }} --auth-provider-arg=refresh-token={{ .RefreshToken }} --auth-provider-arg=id-token={{ .IDToken }}
+  <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} --auth-provider=oidc --auth-provider-arg=idp-issuer-url={{ .Issuer }} --auth-provider-arg=client-id={{ .ClientID }} --auth-provider-arg=client-secret={{ .ClientSecret }} --auth-provider-arg=refresh-token={{ .RefreshToken }} --auth-provider-arg=id-token={{ .IDToken }}
   {{- if .IDPCaURI }} --auth-provider-arg=idp-certificate-authority=${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
   {{- end }}</code></pre>
   </div>
@@ -86,14 +86,14 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
-    <pre><code class="hljs">kubectl config set-context {{ .Username }}-{{ .ClientID }} --cluster={{ .ClientID }} --user={{ .Username}}-{{.ClientID }}</code></pre>
+    <pre><code class="hljs">kubectl config set-context {{ .Username }}-{{ .ClusterName }} --cluster={{ .ClusterName }} --user={{ .Username}}-{{.ClusterName }}</code></pre>
   </div>
 
   <div class="command">
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
-    <pre><code class="hljs">kubectl config use-context {{ .Username }}-{{ .ClientID}}</code></pre>          
-  </div>           
+    <pre><code class="hljs">kubectl config use-context {{ .Username }}-{{ .ClusterName}}</code></pre>
+  </div>
 
 {{ end }}

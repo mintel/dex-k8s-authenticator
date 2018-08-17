@@ -4,7 +4,7 @@
 
     <p>Copy this CA Certificate and download it to your .kube directory</p>
     <div class="command">
-      
+
       <button class="btn" style="float:right" data-clipboard-snippet="">
         <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
@@ -29,8 +29,8 @@
     <h3>Copy Kubernetes CA Certificate From PEM</h3>
 
     <p>Put the CA Certificate into your .kube directory</p>
-      
-    <div class="command"> 
+
+    <div class="command">
 
       <button class="btn" style="float:right" data-clipboard-snippet="">
         <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
@@ -40,17 +40,17 @@
 EOF</code></pre>
     </div>
   {{ end }}
-      
+
   <h3>Run configuration commands</h3>
 
   <p>These commands will update <tt>~/.kube/config</tt></p>
-  
+
   <div class="command">
 
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
-  <pre><code>kubectl config set-cluster {{ .ClientID }} \
+  <pre><code>kubectl config set-cluster {{ .ClusterName }} \
     --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt \
     --server={{ .K8sMasterURI }}</code></pre>
   </div>
@@ -60,7 +60,7 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
-  <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClientID }} \
+  <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} \
     --auth-provider=oidc \
     --auth-provider-arg=idp-issuer-url={{ .Issuer }} \
     --auth-provider-arg=client-id={{ .ClientID }} \
@@ -77,9 +77,9 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
-    <pre><code class="hljs">kubectl config set-context {{ .Username }}-{{ .ClientID }} \
-    --cluster={{ .ClientID }} \
-    --user={{ .Username}}-{{.ClientID }}</code></pre>
+    <pre><code class="hljs">kubectl config set-context {{ .Username }}-{{ .ClusterName }} \
+    --cluster={{ .ClusterName }} \
+    --user={{ .Username}}-{{.ClusterName }}</code></pre>
   </div>
 
   <div class="command">
@@ -87,7 +87,7 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
-    <pre><code class="hljs">kubectl config use-context {{ .Username }}-{{ .ClientID}}</code></pre>          
-  </div>           
+    <pre><code class="hljs">kubectl config use-context {{ .Username }}-{{ .ClusterName}}</code></pre>
+  </div>
 
 {{ end }}
