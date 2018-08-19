@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [UNRELEASED]
 
-
+## [v1.0.0]
 ### Added
 
 - New tabbed layout with clipboard copy options. Key driver for this is to 
@@ -14,7 +14,6 @@ environment (useful for the `client_secret`).
 
 - Added `nodePort` support to Helm charts.
 
-
 - Added `kubectl_version` option in config. Used to construct a download link to `kubectl` which may be useful.
 
 - Added `web_path_prefix` config option to set url-prefix for serving requests and assets.
@@ -24,6 +23,8 @@ environment (useful for the `client_secret`).
 - Added `k8s_ca_pem` config option to provide abililty to specify the Kubernetes CA inline.
 
 ### Changed
+
+- Use `ClusterName` in preference to `ClientID` when generating k8s context commands
 
 - Bump dex version to `v2.10.0`
 
