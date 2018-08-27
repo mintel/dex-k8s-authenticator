@@ -81,6 +81,7 @@ type Config struct {
 	TLS_Cert        string
 	TLS_Key         string
 	IDP_Ca_URI      string
+	IDP_Ca_Pem      string
 	Logo_Uri        string
 	Trusted_Root_Ca []string
 }

@@ -108,6 +108,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 
 	cluster.renderToken(w, rawIDToken, token.RefreshToken,
 		cluster.Config.IDP_Ca_URI,
+		cluster.Config.IDP_Ca_Pem,
 		cluster.Config.Logo_Uri,
 		cluster.Config.Web_Path_Prefix,
 		viper.GetString("kubectl_version"),

@@ -49,6 +49,21 @@ clusters:
 # tls_cert: /path/to/dex-client.crt
 # tls_key: /path/to/dex-client.key
 
+# CA for your IDP - used in WebUI instructions for generating
+# kubeconfig
+# Both idp_ca_uri and idp_ca_pem are optional - you typically specifiy
+# one or the other if required
+#
+# Provides a link to the CA from a hosted site
+# idp_ca_uri: http://url-to-your-ca.crt
+#
+# Provides abililty to specify CA inline
+# idp_ca_pem: |
+#   -----BEGIN CERTIFICATE-----
+#   ...
+#   -----END CERTIFICATE-----
+
+
 # Which address to listen on (set to https if tls configured)
 listen: http://127.0.0.1:5555
 

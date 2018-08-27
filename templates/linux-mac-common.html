@@ -1,6 +1,6 @@
 {{ define "linux-mac-common" }}
   {{ if .IDPCaURI }}
-    <h3>Copy IDP CA Certificate</h3>
+    <h3>Copy IDP CA Certificate From URL</h3>
 
     <p>Copy this CA Certificate and download it to your .kube directory</p>
     <div class="command">
@@ -11,6 +11,23 @@
       <pre><code>curl --create-dirs -s {{ .IDPCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt</code></pre>
     </div>
   {{ end }}
+
+  {{ if .IDPCaPem }}
+    <h3>Copy IDP CA Certificate From PEM</h3>
+
+    <p>Put the CA Certificate into your .kube directory</p>
+
+    <div class="command">
+
+      <button class="btn" style="float:right" data-clipboard-snippet="">
+        <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
+      </button>
+      <pre><code>mkdir -p ${HOME}/.kube/certs/{{ .ClusterName }}/ &amp;&amp; cat &lt;&lt; EOF &gt; ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
+{{ .IDPCaPem }}
+EOF</code></pre>
+    </div>
+  {{ end }}
+
 
   {{ if .K8sCaURI }}
     <h3>Copy Kubernetes CA Certificate From URL</h3>
