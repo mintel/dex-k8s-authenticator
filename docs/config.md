@@ -39,3 +39,34 @@ clusters:
 ```
 
 In this example, `${CLIENT_SECRET_EXAMPLE_CLUSTER}` is substituted at runtime. Must be enclosed by `${...}`
+
+## Web Path Prefix
+
+A common practise is configure `dex-k8s-authenticator` to serve requests under a specific path prefix, such as `https://mycompany.example.com/dex-auth`
+
+You can achieve this by configuring the `web_path_prefix`. In most cases you will need to adjust the Ingress `path` setting to match.
+
+In addition to this, you need to update the `redirect_uri` value.
+
+```yaml
+clusters:
+  - name: example-cluster
+    short_description: "Example Cluster"
+    description: "Example Cluster Long Description..."
+    redirect_uri: http://127.0.0.1:5555/dex-auth/callback/example-cluster
+    client_secret: ...
+    client_id: example-cluster-client-id
+    issuer:  http://127.0.0.1:5556
+    k8s_master_uri: https://your-k8s-master.cluster
+
+# A path-prefix from which to serve requests and assets
+web_path_prefix: /dex-auth
+```
+
+Don't forget to update the Dex `staticClients.redirectURIs` value to include the prefix as well.
+
+### Helm
+
+The `dex-k8s-authenticator` helm charts support this via the `dexK8sAuthenticator.web_path_prefix` and `ingress.path` options. You typically set these to the same value.
+
+Note that the health-checks are configured automatically.
