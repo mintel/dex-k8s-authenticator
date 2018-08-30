@@ -8,8 +8,8 @@ An example configuration is available [here](../examples/config.yaml)
 | Name              | Required | Context | Description                                                                           |
 |-------------------|----------|---------|---------------------------------------------------------------------------------------|
 | name              | yes      | cluster | Internal id of cluster                                                                |
-| short_description | yes      | cluster | Short description of cluster                                                |
-| description       | yes      | cluster | Extended description of cluster                                             |
+| short_description | yes      | cluster | Short description of cluster                                                          |
+| description       | yes      | cluster | Extended description of cluster                                                       |
 | client_secret     | yes      | cluster | OAuth2 client-secret (shared between dex-k8s-auth and dex)                            |
 | client_id         | yes      | cluster | OAuth2 client-id public identifier (shared between dex-k8s-auth and dex)              |
 | issuer            | yes      | cluster | Dex issuer url                                                                        |
@@ -20,8 +20,9 @@ An example configuration is available [here](../examples/config.yaml)
 | tls_cert          | no       | root    | Path to TLS cert if SSL enabled                                                       |
 | tls_key           | no       | root    | Path to TLS key if SSL enabled                                                        |
 | idp_ca_uri        | no       | root    | A url pointing to the CA for generating 'idp-certificate-authority' in the kubeconfig |
+| idp_ca_pem        | no       | root    | The CA for generating 'idp-certificate-authority' in the kubeconfig                   |
 | trusted_root_ca   | no       | root    | A list of trusted-root CA's to be loaded by dex-k8s-auth at runtime                   |
-| listen            | yes      | root    | The listen address/port                                                                    |
+| listen            | yes      | root    | The listen address/port                                                               |
 | web_path_prefix   | no       | root    | A path-prefix to serve dex-k8s-auth at (defaults to '/')                              |
 | kubectl_version   | no       | root    | A kubectl-version string that is used to provided a download path                     |
 | logo_uri          | no       | root    | A url pointing to a logo image that is displayed in the header                        |

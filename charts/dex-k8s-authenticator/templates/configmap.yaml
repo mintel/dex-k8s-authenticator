@@ -20,6 +20,9 @@ data:
     {{- if .idpCaURI }}
     idp_ca_uri: {{ .idpCaURI }}
     {{- end }}
+    {{- if .idpCaPem }}
+    idp_ca_pem: {{ .idpCaPem }}
+    {{- end }}
     {{- if and .tlsCert .tlsKey }} 
     tls_cert: "{{ .tlsCert }}"
     tls_key: "{{ .tlsKey }}"

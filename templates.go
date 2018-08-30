@@ -37,6 +37,7 @@ type templateData struct {
 	K8sCaURI         string
 	K8sCaPem         string
 	IDPCaURI         string
+	IDPCaPem         string
 	LogoURI          string
 	Web_Path_Prefix  string
 	KubectlVersion   string
@@ -46,6 +47,7 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	idToken,
 	refreshToken string,
 	idpCaURI string,
+	idpCaPem string,
 	logoURI string,
 	webPathPrefix string,
 	kubectlVersion string,
@@ -75,6 +77,7 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 		K8sCaURI:         cluster.K8s_Ca_URI,
 		K8sCaPem:         cluster.K8s_Ca_Pem,
 		IDPCaURI:         idpCaURI,
+		IDPCaPem:         idpCaPem,
 		LogoURI:          logoURI,
 		Web_Path_Prefix:  webPathPrefix,
 		KubectlVersion:   kubectlVersion}
