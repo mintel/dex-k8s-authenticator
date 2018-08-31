@@ -94,10 +94,9 @@ EOF</code></pre>
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
   <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} --auth-provider=oidc --auth-provider-arg=idp-issuer-url={{ .Issuer }} --auth-provider-arg=client-id={{ .ClientID }} --auth-provider-arg=client-secret={{ .ClientSecret }} --auth-provider-arg=refresh-token={{ .RefreshToken }} --auth-provider-arg=id-token={{ .IDToken }}
-  {{- if .IDPCaURI }} --auth-provider-arg=idp-certificate-authority=${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
+  {{- if or (.IDPCaURI) (.IDPCaPem) }} --auth-provider-arg=idp-certificate-authority=${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
   {{- end }}</code></pre>
   </div>
-
   <div class="command">
 
     <button class="btn" style="float:right" data-clipboard-snippet="">
