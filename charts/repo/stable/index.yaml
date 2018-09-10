@@ -1,0 +1,39 @@
+apiVersion: v1
+entries:
+  dex:
+  - apiVersion: v1
+    appVersion: 2.10.0
+    created: 2018-09-10T14:26:03.297835062+01:00
+    description: Dex federated authentication service
+    digest: 7a8d8e5ab536a87420b81309afbb709f51d9b1dfe4bfa429902d2d7a4c3bc54b
+    icon: https://github.com/coreos/dex/blob/master/Documentation/logos/dex-horizontal-color.png
+    maintainers:
+    - email: aaron@roydhouse.com
+      name: Aaron Roydhouse
+    - email: nbadger@mintel.com
+      name: Nick Badger
+    name: dex
+    sources:
+    - https://github.com/coreos/dex
+    - https://github.com/mintel/dex-k8s-authenticator/tree/master/charts/dex
+    urls:
+    - https://raw.githubusercontent.com/mintel/dex-k8s-authenticator/master/charts/repo/stable/dex-1.0.0.tgz
+    version: 1.0.0
+  dex-k8s-authenticator:
+  - apiVersion: v1
+    appVersion: v1.0.0
+    created: 2018-09-10T14:26:03.298193608+01:00
+    description: Authenticator for using Dex with Kubernetes
+    digest: 473168574e0841bfb3282c5a5e8835f4ac52b7d371431ea82fed50671917eaf1
+    maintainers:
+    - email: aaron@roydhouse.com
+      name: Aaron Roydhouse
+    - email: nbadger@mintel.com
+      name: Nick Badger
+    name: dex-k8s-authenticator
+    sources:
+    - https://github.com/mintel/dex-k8s-authenticator
+    urls:
+    - https://raw.githubusercontent.com/mintel/dex-k8s-authenticator/master/charts/repo/stable/dex-k8s-authenticator-1.0.0.tgz
+    version: 1.0.0
+generated: 2018-09-10T14:26:03.29728419+01:00
