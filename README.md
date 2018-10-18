@@ -35,6 +35,7 @@ Feel free to raise feature-requests and bugs. PR's are also very welcome.
 - https://github.com/micahhausler/k8s-oidc-helper
 - https://github.com/negz/kuberos
 - https://github.com/negz/kubehook
+- https://github.com/fydrah/loginapp
 
 This application is based on the original [example-app](https://github.com/coreos/dex/tree/master/cmd/example-app
 ) available in the CoreOS Dex repo.
