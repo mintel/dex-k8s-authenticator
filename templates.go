@@ -59,8 +59,11 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 		panic(err)
 	}
 
-	email := data["email"].(string)
-	unix_username := strings.Split(email, "@")[0]
+	unix_username := "user"
+	if data["email"] != nil {
+		email := data["email"].(string)
+		unix_username = strings.Split(email, "@")[0]
+	}
 
 	token_data := templateData{
 		IDToken:          idToken,
