@@ -63,7 +63,7 @@ pre {
 
 .dex-btn-icon--local {
   background-color: #84B6EF;
-  background-image: url({{ .Web_Path_Prefix }}static/button.svg);
+  background-image: url(./button.svg);
 }
 
 .dex-btn-text {
