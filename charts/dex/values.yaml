@@ -7,8 +7,8 @@ global:
 replicaCount: 1
 
 image:
-  repository: quay.io/coreos/dex
-  tag: v2.10.0
+  repository: quay.io/dexidp/dex
+  tag: v2.13.0
   pullPolicy: IfNotPresent
 
 service:
