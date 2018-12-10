@@ -27,6 +27,8 @@ spec:
         app: {{ template "dex-k8s-authenticator.name" . }}
         env: {{ default "dev" .Values.global.deployEnv }}
         release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
       - name: {{ .Chart.Name }}

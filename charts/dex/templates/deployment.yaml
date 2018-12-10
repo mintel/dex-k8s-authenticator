@@ -33,6 +33,8 @@ spec:
         app: {{ template "dex.name" . }}
         env: {{ default "dev" .Values.global.deployEnv }}
         release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       volumes:
       - name: config
