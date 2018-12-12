@@ -1,19 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [v1.1.0]
 
 ### Added
 
 - Documentation on `web_path_prefix`
 
+- Helm charts now add a checksum annotation on the configmap to roll-deployments when configuration changes
+
+- Added IDPCaPem option to support displaying of idp-ca inline
+
+
+### Changed
+
+- Bump dex version to `v2.13.0` and pull from new repo at quay.io/dexidp/dex
+
+- Documentation improvements
+
+### Fixed
+
+- Fixes to some css to use relative paths
+
 ## [v1.0.0]
 ### Added
 
-- New tabbed layout with clipboard copy options. Key driver for this is to 
+- New tabbed layout with clipboard copy options. Key driver for this is to
 enable Windows specific instructions.
 
-- Added envar substitutions. Can now generate a config based on values in the 
+- Added envar substitutions. Can now generate a config based on values in the
 environment (useful for the `client_secret`).
 
 - Added `nodePort` support to Helm charts.
@@ -62,14 +77,14 @@ cluster option.
 ### Fixed
 - Fixed helm-chart ingress servicePort
 
-## [v0.2.0] 
+## [v0.2.0]
 ### Added
-- Helm chart serviceAccountName 
+- Helm chart serviceAccountName
 - Documentation improvements
 
 ### Changed
 - Helm chart RBAC (renamed some vars).
 
-## [v0.1.0] 
+## [v0.1.0]
 ### Added
 - Initial release
