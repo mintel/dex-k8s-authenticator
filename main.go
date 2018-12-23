@@ -64,13 +64,14 @@ type Cluster struct {
 	K8s_Master_URI    string
 	K8s_Ca_URI        string
 	K8s_Ca_Pem        string
+	Bearer_Token      bool
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
 	OfflineAsScope bool
 	Client         *http.Client
 	Redirect_URI   string
-    Config         Config
+	Config         Config
 }
 
 // Define our configuration
@@ -189,7 +190,7 @@ func start_app(config Config) {
 			}()
 		}
 
-        cluster.Config = config
+		cluster.Config = config
 
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 

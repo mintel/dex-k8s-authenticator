@@ -40,6 +40,7 @@ dexK8sAuthenticator:
     client_id: my-cluster
     redirect_uri: https://login.example.com/callback/my-cluster
     k8s_ca_uri: https://url-to-your-ca.crt
+    bearer_token: false
 
 service:
   type: ClusterIP
