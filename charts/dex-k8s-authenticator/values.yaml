@@ -30,6 +30,7 @@ dexK8sAuthenticator:
     k8s_ca_uri: https://url-to-your-ca.crt
 
 service:
+  annotations: {}
   type: ClusterIP
   port: 5555
 
