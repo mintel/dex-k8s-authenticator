@@ -94,7 +94,7 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
-    <pre><code class="hljs">kubectl config set-context {{ .Username }}-{{ .ClusterName }} \
+    <pre><code class="hljs">kubectl config set-context {{ if not .StaticContextName }}{{ .Username }}-{{ end }}{{ .ClusterName }} \
     --cluster={{ .ClusterName }} \
     --user={{ .Username}}-{{.ClusterName }}</code></pre>
   </div>
@@ -104,7 +104,7 @@ EOF</code></pre>
     <button class="btn" style="float:right" data-clipboard-snippet="">
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
     </button>
-    <pre><code class="hljs">kubectl config use-context {{ .Username }}-{{ .ClusterName}}</code></pre>
+    <pre><code class="hljs">kubectl config use-context {{ if not .StaticContextName }}{{ .Username }}-{{ end }}{{ .ClusterName}}</code></pre>
   </div>
 
 {{ end }}

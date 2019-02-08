@@ -24,6 +24,9 @@ clusters:
     # kubeconfig
     k8s_master_uri: https://your-k8s-master.cluster
 
+    # don't use username for context
+    static_context_name: true
+
     # CA for your k8s cluster - used in WebUI instructions for generating
     # kubeconfig
     # Both k8s_ca_uri and k8s_ca_pem are optional - you typically specifiy

@@ -55,15 +55,16 @@ func (d debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 // Define each cluster
 type Cluster struct {
-	Name              string
-	Short_Description string
-	Description       string
-	Issuer            string
-	Client_Secret     string
-	Client_ID         string
-	K8s_Master_URI    string
-	K8s_Ca_URI        string
-	K8s_Ca_Pem        string
+	Name                string
+	Short_Description   string
+	Description         string
+	Issuer              string
+	Client_Secret       string
+	Client_ID           string
+	K8s_Master_URI      string
+	K8s_Ca_URI          string
+	K8s_Ca_Pem          string
+	Static_Context_Name bool
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
@@ -75,15 +76,16 @@ type Cluster struct {
 
 // Define our configuration
 type Config struct {
-	Clusters        []Cluster
-	Listen          string
-	Web_Path_Prefix string
-	TLS_Cert        string
-	TLS_Key         string
-	IDP_Ca_URI      string
-	IDP_Ca_Pem      string
-	Logo_Uri        string
-	Trusted_Root_Ca []string
+	Clusters            []Cluster
+	Listen              string
+	Web_Path_Prefix     string
+	TLS_Cert            string
+	TLS_Key             string
+	IDP_Ca_URI          string
+	IDP_Ca_Pem          string
+	Logo_Uri            string
+	Static_Context_Name bool
+	Trusted_Root_Ca     []string
 }
 
 func substituteEnvVars(text string) string {

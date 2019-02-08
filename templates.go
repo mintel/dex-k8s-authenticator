@@ -23,24 +23,25 @@ func renderIndex(w http.ResponseWriter, config *Config) {
 }
 
 type templateData struct {
-	IDToken          string
-	RefreshToken     string
-	RedirectURL      string
-	Claims           string
-	Username         string
-	Issuer           string
-	ClusterName      string
-	ShortDescription string
-	ClientSecret     string
-	ClientID         string
-	K8sMasterURI     string
-	K8sCaURI         string
-	K8sCaPem         string
-	IDPCaURI         string
-	IDPCaPem         string
-	LogoURI          string
-	Web_Path_Prefix  string
-	KubectlVersion   string
+	IDToken           string
+	RefreshToken      string
+	RedirectURL       string
+	Claims            string
+	Username          string
+	Issuer            string
+	ClusterName       string
+	ShortDescription  string
+	ClientSecret      string
+	ClientID          string
+	K8sMasterURI      string
+	K8sCaURI          string
+	K8sCaPem          string
+	IDPCaURI          string
+	IDPCaPem          string
+	LogoURI           string
+	Web_Path_Prefix   string
+	StaticContextName bool
+	KubectlVersion    string
 }
 
 func (cluster *Cluster) renderToken(w http.ResponseWriter,
@@ -66,24 +67,25 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	}
 
 	token_data := templateData{
-		IDToken:          idToken,
-		RefreshToken:     refreshToken,
-		RedirectURL:      cluster.Redirect_URI,
-		Claims:           string(claims),
-		Username:         unix_username,
-		Issuer:           data["iss"].(string),
-		ClusterName:      cluster.Name,
-		ShortDescription: cluster.Short_Description,
-		ClientSecret:     cluster.Client_Secret,
-		ClientID:         cluster.Client_ID,
-		K8sMasterURI:     cluster.K8s_Master_URI,
-		K8sCaURI:         cluster.K8s_Ca_URI,
-		K8sCaPem:         cluster.K8s_Ca_Pem,
-		IDPCaURI:         idpCaURI,
-		IDPCaPem:         idpCaPem,
-		LogoURI:          logoURI,
-		Web_Path_Prefix:  webPathPrefix,
-		KubectlVersion:   kubectlVersion}
+		IDToken:           idToken,
+		RefreshToken:      refreshToken,
+		RedirectURL:       cluster.Redirect_URI,
+		Claims:            string(claims),
+		Username:          unix_username,
+		Issuer:            data["iss"].(string),
+		ClusterName:       cluster.Name,
+		ShortDescription:  cluster.Short_Description,
+		ClientSecret:      cluster.Client_Secret,
+		ClientID:          cluster.Client_ID,
+		K8sMasterURI:      cluster.K8s_Master_URI,
+		K8sCaURI:          cluster.K8s_Ca_URI,
+		K8sCaPem:          cluster.K8s_Ca_Pem,
+		IDPCaURI:          idpCaURI,
+		IDPCaPem:          idpCaPem,
+		LogoURI:           logoURI,
+		Web_Path_Prefix:   webPathPrefix,
+		StaticContextName: cluster.Static_Context_Name,
+		KubectlVersion:    kubectlVersion}
 
 	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)
 
