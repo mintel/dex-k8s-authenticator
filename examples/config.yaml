@@ -7,7 +7,7 @@ clusters:
     description: "Example Cluster Long Description..."
 
     # Redirect Url pointing to dex-k8s-authenticator callback for this cluster
-    # This should be configured in Dex as part of the staticClients 
+    # This should be configured in Dex as part of the staticClients
     # redirectURIs option
     redirect_uri: http://127.0.0.1:5555/callback/example-cluster
 
@@ -16,14 +16,17 @@ clusters:
 
     # Client ID - should match value in Dex
     client_id: example-cluster-client-id
-    
+
     # Dex Issuer - Must be resolvable
     issuer:  http://127.0.0.1:5556
 
     # Url to k8s API endpoint - used in WebUI instructions for generating
     # kubeconfig
     k8s_master_uri: https://your-k8s-master.cluster
-    
+
+    # don't use username for context
+    static_context_name: false
+
     # CA for your k8s cluster - used in WebUI instructions for generating
     # kubeconfig
     # Both k8s_ca_uri and k8s_ca_pem are optional - you typically specifiy
@@ -36,10 +39,10 @@ clusters:
     # k8s_ca_pem: |
     #   -----BEGIN CERTIFICATE-----
     #   ...
-    #   -----END CERTIFICATE----- 
+    #   -----END CERTIFICATE-----
 
 # Specify multiple extra root CA files to be loaded
-# trusted_root_ca: 
+# trusted_root_ca:
 #   -|
 #     -----BEGIN CERTIFICATE-----
 #     ...
@@ -67,13 +70,13 @@ clusters:
 # Which address to listen on (set to https if tls configured)
 listen: http://127.0.0.1:5555
 
-# A path-prefix from which to serve requests and assets 
+# A path-prefix from which to serve requests and assets
 web_path_prefix: /
 
 # Optional kubectl version which provides a download link to the the binary
 kubectl_version: v1.11.2
 
-# Optional Url to display a logo image 
+# Optional Url to display a logo image
 # logo_uri: http://<path-to-your-logo.png>
 
 # Enable more debug
