@@ -40,9 +40,7 @@
         <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
 
-      <pre><code>mkdir -p ${HOME}/.kube/certs/{{ .ClusterName }}/ &amp;&amp; cat &lt;&lt; EOF &gt; ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
-{{ .IDPCaPem}}
-EOF</code></pre>
+      <pre><code>powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "New-Item %USERPROFILE%/.kube/certs/{{ .ClusterName }}/idp-ca.crt -Force -Value {{ .IDPCaPem | escape }} | Out-Null"</code></pre>
     </div>
   {{ end }}
 
@@ -70,9 +68,7 @@ EOF</code></pre>
       <button class="btn" style="float:right" data-clipboard-snippet="">
         <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
       </button>
-      <pre><code>mkdir -p ${HOME}/.kube/certs/{{ .ClusterName }}/ &amp;&amp; cat &lt;&lt; EOF &gt; ${HOME}/.kube/certs/{{ .ClusterName }}/k8s-ca.crt
-{{ .K8sCaPem }}
-EOF</code></pre>
+      <pre><code>powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "New-Item %USERPROFILE%/.kube/certs/{{ .ClusterName }}/k8s-ca.crt -Force -Value {{ .K8sCaPem | escape }} | Out-Null"</code></pre>
     </div>
   {{ end }}
 
