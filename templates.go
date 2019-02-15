@@ -11,7 +11,7 @@ import (
 )
 
 var funcMap = template.FuncMap{
-	"escape": func(text string) template.HTML {
+	"escapeWin": func(text string) template.HTML {
 		text = strings.Replace(text, " ", "` ", -1)
 		text = strings.Replace(text, "\n", "`r`n", -1)
 		return template.HTML(text)
