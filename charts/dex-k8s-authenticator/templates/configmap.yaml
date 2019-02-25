@@ -21,7 +21,7 @@ data:
     idp_ca_uri: {{ .idpCaURI }}
     {{- end }}
     {{- if .idpCaPem }}
-    idp_ca_pem: {{ .idpCaPem }}
+    idp_ca_pem: {{ toYaml .idpCaPem | indent 4 }}
     {{- end }}
     {{- if and .tlsCert .tlsKey }} 
     tls_cert: "{{ .tlsCert }}"
