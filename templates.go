@@ -10,8 +10,16 @@ import (
 	"strings"
 )
 
+var funcMap = template.FuncMap{
+	"escapeWin": func(text string) template.HTML {
+		text = strings.Replace(text, " ", "` ", -1)
+		text = strings.Replace(text, "\n", "`r`n", -1)
+		return template.HTML(text)
+	},
+}
+
 // compile all templates and cache them
-var templates = template.Must(template.ParseGlob("./templates/*.html"))
+var templates = template.Must(template.New("").Funcs(funcMap).ParseGlob("./templates/*.html"))
 
 func renderIndex(w http.ResponseWriter, config *Config) {
 	t, _ := template.ParseFiles("./templates/index.html")
