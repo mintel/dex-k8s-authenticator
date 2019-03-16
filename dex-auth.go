@@ -26,7 +26,12 @@ func (cluster *Cluster) oauth2Config(scopes []string) *oauth2.Config {
 }
 
 func (config *Config) handleIndex(w http.ResponseWriter, r *http.Request) {
-	renderIndex(w, config)
+
+	if len(config.Clusters) == 1 && r.URL.String() == config.Web_Path_Prefix {
+		http.Redirect(w, r, path.Join(config.Web_Path_Prefix, "login", config.Clusters[0].Name), http.StatusSeeOther)
+	} else {
+		renderIndex(w, config)
+	}
 }
 
 func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
