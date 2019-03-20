@@ -17,7 +17,7 @@ entries:
     - https://github.com/coreos/dex
     - https://github.com/mintel/dex-k8s-authenticator/tree/master/charts/dex
     urls:
-    - https://raw.githubusercontent.com/mintel/dex-k8s-authenticator/master/charts/repo/stable/dex-1.0.0.tgz
+    - https://raw.githubusercontent.com/mintel/dex-k8s-authenticator/feat-helm-repo/charts/repo/stable/dex-1.0.0.tgz
     version: 1.0.0
   dex-k8s-authenticator:
   - apiVersion: v1
@@ -34,6 +34,6 @@ entries:
     sources:
     - https://github.com/mintel/dex-k8s-authenticator
     urls:
-    - https://raw.githubusercontent.com/mintel/dex-k8s-authenticator/master/charts/repo/stable/dex-k8s-authenticator-1.0.0.tgz
+    - https://raw.githubusercontent.com/mintel/dex-k8s-authenticator/feat-helm-repo/charts/repo/stable/dex-k8s-authenticator-1.0.0.tgz
     version: 1.0.0
 generated: 2018-09-10T14:26:03.29728419+01:00
