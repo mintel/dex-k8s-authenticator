@@ -8,7 +8,7 @@ replicaCount: 1
 
 image:
   repository: mintel/dex-k8s-authenticator
-  tag: latest
+  tag: 1.1.0
   pullPolicy: Always
 
 dexK8sAuthenticator:
