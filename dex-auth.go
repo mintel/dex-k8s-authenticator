@@ -52,7 +52,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	var (
 		err   error
 		token *oauth2.Token
-		IDP_CA_PEM string
+		IdpCaPem string
 	)
 
 	log.Printf("Handling callback for: %s", cluster.Name)
@@ -116,18 +116,18 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	json.Indent(buff, []byte(claims), "", "  ")
 
 	if cluster.Config.IDP_Ca_Pem != "" {
-		IDP_CA_PEM = cluster.Config.IDP_Ca_Pem
+		IdpCaPem = cluster.Config.IDP_Ca_Pem
 	} else if cluster.Config.IDP_Ca_Pem_File != "" {
 		content, err := ioutil.ReadFile(cluster.Config.IDP_Ca_Pem_File)
 		if err != nil {
 			log.Fatalf("Failed to load CA from file %s, %s", cluster.Config.IDP_Ca_Pem_File, err)
 		}
-		IDP_CA_PEM = cast.ToString(content)
+		IdpCaPem = cast.ToString(content)
 	}
 
 	cluster.renderToken(w, rawIDToken, token.RefreshToken,
 		cluster.Config.IDP_Ca_URI,
-		IDP_CA_PEM,
+		IdpCaPem,
 		cluster.Config.Logo_Uri,
 		cluster.Config.Web_Path_Prefix,
 		viper.GetString("kubectl_version"),
