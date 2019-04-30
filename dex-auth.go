@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/coreos/go-oidc"
-	"github.com/spf13/viper"
 	"github.com/spf13/cast"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
@@ -50,8 +50,8 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	var (
-		err   error
-		token *oauth2.Token
+		err      error
+		token    *oauth2.Token
 		IdpCaPem string
 	)
 
