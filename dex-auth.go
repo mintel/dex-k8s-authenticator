@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/coreos/go-oidc"
+	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
@@ -48,8 +50,9 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	var (
-		err   error
-		token *oauth2.Token
+		err      error
+		token    *oauth2.Token
+		IdpCaPem string
 	)
 
 	log.Printf("Handling callback for: %s", cluster.Name)
@@ -112,9 +115,19 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	buff := new(bytes.Buffer)
 	json.Indent(buff, []byte(claims), "", "  ")
 
+	if cluster.Config.IDP_Ca_Pem != "" {
+		IdpCaPem = cluster.Config.IDP_Ca_Pem
+	} else if cluster.Config.IDP_Ca_Pem_File != "" {
+		content, err := ioutil.ReadFile(cluster.Config.IDP_Ca_Pem_File)
+		if err != nil {
+			log.Fatalf("Failed to load CA from file %s, %s", cluster.Config.IDP_Ca_Pem_File, err)
+		}
+		IdpCaPem = cast.ToString(content)
+	}
+
 	cluster.renderToken(w, rawIDToken, token.RefreshToken,
 		cluster.Config.IDP_Ca_URI,
-		cluster.Config.IDP_Ca_Pem,
+		IdpCaPem,
 		cluster.Config.Logo_Uri,
 		cluster.Config.Web_Path_Prefix,
 		viper.GetString("kubectl_version"),

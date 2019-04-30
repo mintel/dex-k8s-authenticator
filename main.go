@@ -76,16 +76,18 @@ type Cluster struct {
 
 // Define our configuration
 type Config struct {
-	Clusters            []Cluster
-	Listen              string
-	Web_Path_Prefix     string
-	TLS_Cert            string
-	TLS_Key             string
-	IDP_Ca_URI          string
-	IDP_Ca_Pem          string
-	Logo_Uri            string
-	Static_Context_Name bool
-	Trusted_Root_Ca     []string
+	Clusters             []Cluster
+	Listen               string
+	Web_Path_Prefix      string
+	TLS_Cert             string
+	TLS_Key              string
+	IDP_Ca_URI           string
+	IDP_Ca_Pem           string
+	IDP_Ca_Pem_File      string
+	Logo_Uri             string
+	Static_Context_Name  bool
+	Trusted_Root_Ca      []string
+	Trusted_Root_Ca_File string
 }
 
 func substituteEnvVars(text string) string {
@@ -115,10 +117,24 @@ func start_app(config Config) {
 	}
 
 	certp, err := x509.SystemCertPool()
-	for _, cert := range config.Trusted_Root_Ca {
-		ok := certp.AppendCertsFromPEM([]byte(cert))
+	// Load Inline CA certs
+	if len(config.Trusted_Root_Ca) > 0 {
+		for _, cert := range config.Trusted_Root_Ca {
+			ok := certp.AppendCertsFromPEM([]byte(cert))
+			if !ok {
+				log.Fatalf("Failed to parse a trusted cert, pem format expected")
+			}
+		}
+	}
+	// Load CA certs from file
+	if config.Trusted_Root_Ca_File != "" {
+		content, err := ioutil.ReadFile(config.Trusted_Root_Ca_File)
+		if err != nil {
+			log.Fatalf("Failed to read file Trusted Root CA %s", config.Trusted_Root_Ca_File)
+		}
+		ok := certp.AppendCertsFromPEM([]byte(content))
 		if !ok {
-			log.Fatalf("Failed to parse a trusted cert, pem format expected")
+			log.Fatalf("Failed to parse a trusted cert from file %s, pem format expected", config.Trusted_Root_Ca_File)
 		}
 	}
 
