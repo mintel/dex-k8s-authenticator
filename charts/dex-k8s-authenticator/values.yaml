@@ -33,6 +33,7 @@ service:
   annotations: {}
   type: ClusterIP
   port: 5555
+  # loadBalancerIP: 127.0.0.1
 
   # For nodeport, specify the following:
   #   type: NodePort

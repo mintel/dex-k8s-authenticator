@@ -44,6 +44,7 @@ dexK8sAuthenticator:
 service:
   type: ClusterIP
   port: 5555
+  # loadBalancerIP: 127.0.0.1
 
 ingress:
   enabled: false
