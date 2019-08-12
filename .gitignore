@@ -1,5 +1,4 @@
 *~
 bin
-vendor
 ./idea
 *.iml

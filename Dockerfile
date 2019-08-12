@@ -1,12 +1,22 @@
-FROM golang:1.10.3-alpine3.8
+FROM golang:1.12-alpine3.10
 
 RUN apk add --no-cache --update alpine-sdk bash
 
-COPY . /go/src/github.com/mintel/dex-k8s-authenticator
-WORKDIR /go/src/github.com/mintel/dex-k8s-authenticator
-RUN make get && make 
+ENV GO111MODULE=on
 
-FROM alpine:3.8
+WORKDIR /app
+
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod download
+
+COPY . .
+
+RUN make build
+
+FROM alpine:3.10.1
+
 # Dex connectors, such as GitHub and Google logins require root certificates.
 # Proper installations should manage those certificates, but it's a bad user
 # experience when this doesn't work out of the box.
@@ -15,11 +25,12 @@ FROM alpine:3.8
 RUN apk add --update ca-certificates openssl curl
 
 RUN mkdir -p /app/bin
-COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator/bin/dex-k8s-authenticator /app/bin/dex-k8s-authenticator
-COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator/html /app/html
-COPY --from=0 /go/src/github.com/mintel/dex-k8s-authenticator/templates /app/templates
+COPY --from=0 /app/bin/dex-k8s-authenticator /app/bin/
+COPY --from=0 /app/html /app/html
+COPY --from=0 /app/templates /app/templates
 
-# Add any required certs/key by mounting a volume on /certs - Entrypoint will copy them and run update-ca-certificates at startup
+# Add any required certs/key by mounting a volume on /certs
+# The entrypoint will copy them and run update-ca-certificates at startup
 RUN mkdir -p /certs
 
 WORKDIR /app
