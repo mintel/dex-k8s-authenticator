@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Bump to dex version to `v2.17.0`
 - Bump to `golang:1.12-alpine3.10`
 - Switch to Go Modules
 - Minor update (skip cluster selection if only 1 cluster defined)
