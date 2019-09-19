@@ -1,0 +1,61 @@
+# Which address to listen on (set to https if tls configured)
+listen: http://127.0.0.1:5555
+
+# A path-prefix from which to serve requests and assets
+web_path_prefix: /
+
+# Optional kubectl version which provides a download link to the the binary
+kubectl_version: v1.11.2
+
+# Optional Url to display a logo image
+# logo_uri: http://<path-to-your-logo.png>
+
+# Enable more debug
+debug: true
+
+clusters:
+  - name: sp-ci-sf
+    short_description: "sp-ci-sf"
+    description: "ServingPlatform's CI Kubernetes playground"
+    redirect_uri: http://k8s-dex-app.otenv.com:5555/callback-sp-ci-sf
+    client_secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+    client_id: k8s-dex-app
+    issuer:  https://k8s-sp-ci-sf.otenv.com/dex
+    k8s_master_uri: https://k8s-sp-ci-sf.otenv.com:6443
+    static_context_name: false
+    k8s_ca_pem: |
+      -----BEGIN CERTIFICATE-----
+      MIICyDCCAbCgAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl
+      cm5ldGVzMB4XDTE5MDYxMjIwMjI1M1oXDTI5MDYwOTIwMjI1M1owFTETMBEGA1UE
+      AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALgb
+      n32KzvzxyiAENMjz3eR5dxpqVzGwUg2o4b2ztslEOtaPHIMdc91czk0ceeG5X60P
+      zk3eZV5Ab0dmg7g1D+4DVyMCfnflqG0zZ5J1I5ZhzeWPVU4dPdxQxAlS4dN4Dadc
+      2KaQmTTeSSkSkRkb1OuewXO4XcoLyrzsyI4aoas8cIcuZwweFCgE1Byvlbt990Ey
+      +wnqDqaAmrwg2IV6nCMjEg2M4YuGzBtPwK40G4gdcWr5gQfi7hny5PpNG779S2DU
+      L9M8UQAfn0olx2qJrjfLGHbPgNYH85Em0QeFTI6SS/R0pk+6YujSaHIYw80jcOYw
+      b/TYZ6u3BeQvhrJcGOsCAwEAAaMjMCEwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB
+      /wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBABJbpscmucuQyJdZGa+Q5PVU0EnO
+      18Tmu74Q01viOj185BcnyYElHX9eNfXEndV02qAeRu8H+H5EICc4DnA4ZUiWxwPE
+      XiwFeDFZslKRTKP831ccAgYDDA+x6mNPqwxyi2OitqZmhP/8d+2df0USF0NzEzhv
+      SUINoAjLDmv9Vvmvi/9fKz0hrEK5754EYLI7ixjQjzx2vhNt+7ZnXKHPEKYoc9bj
+      KOO6NwonzNknjDcp0b/y6Dvg1VTf4mhF7OSCZPN0ZKqD/XElDyE17xPY0uJL8sEZ
+      CaMMHlH4V9UFWglw7aT30UoSQCZ3hosoL43CIx4VFCkztoQLokCDvFqIth4=
+      -----END CERTIFICATE-----
+trusted_root_ca: |-2
+  -----BEGIN CERTIFICATE-----
+  MIICyDCCAbCgAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl
+  cm5ldGVzMB4XDTE5MDYxMjIwMjI1M1oXDTI5MDYwOTIwMjI1M1owFTETMBEGA1UE
+  AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALgb
+  n32KzvzxyiAENMjz3eR5dxpqVzGwUg2o4b2ztslEOtaPHIMdc91czk0ceeG5X60P
+  zk3eZV5Ab0dmg7g1D+4DVyMCfnflqG0zZ5J1I5ZhzeWPVU4dPdxQxAlS4dN4Dadc
+  2KaQmTTeSSkSkRkb1OuewXO4XcoLyrzsyI4aoas8cIcuZwweFCgE1Byvlbt990Ey
+  +wnqDqaAmrwg2IV6nCMjEg2M4YuGzBtPwK40G4gdcWr5gQfi7hny5PpNG779S2DU
+  L9M8UQAfn0olx2qJrjfLGHbPgNYH85Em0QeFTI6SS/R0pk+6YujSaHIYw80jcOYw
+  b/TYZ6u3BeQvhrJcGOsCAwEAAaMjMCEwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB
+  /wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBABJbpscmucuQyJdZGa+Q5PVU0EnO
+  18Tmu74Q01viOj185BcnyYElHX9eNfXEndV02qAeRu8H+H5EICc4DnA4ZUiWxwPE
+  XiwFeDFZslKRTKP831ccAgYDDA+x6mNPqwxyi2OitqZmhP/8d+2df0USF0NzEzhv
+  SUINoAjLDmv9Vvmvi/9fKz0hrEK5754EYLI7ixjQjzx2vhNt+7ZnXKHPEKYoc9bj
+  KOO6NwonzNknjDcp0b/y6Dvg1VTf4mhF7OSCZPN0ZKqD/XElDyE17xPY0uJL8sEZ
+  CaMMHlH4V9UFWglw7aT30UoSQCZ3hosoL43CIx4VFCkztoQLokCDvFqIth4=
+  -----END CERTIFICATE-----
