@@ -2,3 +2,4 @@
 bin
 ./idea
 *.iml
+dex-k8s-authenticator
