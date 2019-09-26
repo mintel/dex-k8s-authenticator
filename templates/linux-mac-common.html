@@ -81,11 +81,11 @@ EOF</code></pre>
     </button>
   <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} \
     --auth-provider=oidc \
-    --auth-provider-arg=idp-issuer-url={{ .Issuer }} \
-    --auth-provider-arg=client-id={{ .ClientID }} \
-    --auth-provider-arg=client-secret={{ .ClientSecret }} \
-    --auth-provider-arg=refresh-token={{ .RefreshToken }} \
-    --auth-provider-arg=id-token={{ .IDToken }}
+    --auth-provider-arg="idp-issuer-url={{ .Issuer }}" \
+    --auth-provider-arg="client-id={{ .ClientID }}" \
+    --auth-provider-arg="client-secret={{ .ClientSecret }}" \
+    --auth-provider-arg="refresh-token={{ .RefreshToken }}" \
+    --auth-provider-arg="id-token={{ .IDToken }}"
   {{- if or (.IDPCaURI) (.IDPCaPem) }} \
     --auth-provider-arg=idp-certificate-authority=${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
   {{- end }}</code></pre>
