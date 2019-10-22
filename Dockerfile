@@ -22,7 +22,7 @@ FROM alpine:3.10.1
 # experience when this doesn't work out of the box.
 #
 # OpenSSL is required so wget can query HTTPS endpoints for health checking.
-RUN apk add --update ca-certificates openssl curl
+RUN apk add --update ca-certificates openssl curl tini
 
 RUN mkdir -p /app/bin
 COPY --from=0 /app/bin/dex-k8s-authenticator /app/bin/
@@ -38,7 +38,7 @@ WORKDIR /app
 COPY entrypoint.sh /
 RUN chmod a+x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
 
 CMD ["--help"]
 
