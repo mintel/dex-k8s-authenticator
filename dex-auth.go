@@ -48,6 +48,28 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
 
+func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
+	rawIDToken, ok := token.Extra("id_token").(string)
+	if !ok {
+		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
+		return
+	}
+
+	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
+		return
+	}
+  
+	cluster.renderScript(w, rawIDToken, token.RefreshToken,
+		cluster.Config.IDP_Ca_URI,
+		IdpCaPem,
+		cluster.Config.Logo_Uri,
+		cluster.Config.Web_Path_Prefix,
+		viper.GetString("kubectl_version"),
+		buff.Bytes())
+}
+
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	var (
 		err      error
