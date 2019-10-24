@@ -1,0 +1,50 @@
+{{ define "curl-ca" }}
+ curl --create-dirs -s {{ .IDPCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
+{{ end }}
+
+{{ define "copy-ca-crt" }}
+mkdir -p ${HOME}/.kube/certs/{{ .ClusterName }}/ &amp;&amp; cat &lt;&lt; EOF &gt; ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
+{{ .IDPCaPem }}
+EOF
+{{ end }}
+
+{{ define "curl-k8-crt" }}
+curl --create-dirs -s {{ .K8sCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/k8s-ca.crt
+{{ end }}
+
+{{ define "copy-k8-crt" }}
+    mkdir -p ${HOME}/.kube/certs/{{ .ClusterName }}/ &amp;&amp; cat &lt;&lt; EOF &gt; ${HOME}/.kube/certs/{{ .ClusterName }}/k8s-ca.crt
+{{ .K8sCaPem }}
+EOF
+{{ end }}
+
+{{ define "create-context" }}
+  kubectl config set-cluster {{ .ClusterName }} \
+  {{- if or .K8sCaPem .K8sCaURI }}
+    --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt \
+  {{- end }}
+    --server={{ .K8sMasterURI }}
+{{ end }}
+
+{{ define "set-credentials" }}
+ kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} \
+    --auth-provider=oidc \
+    --auth-provider-arg=idp-issuer-url={{ .Issuer }} \
+    --auth-provider-arg=client-id={{ .ClientID }} \
+    --auth-provider-arg=client-secret={{ .ClientSecret }} \
+    --auth-provider-arg=refresh-token={{ .RefreshToken }} \
+    --auth-provider-arg=id-token={{ .IDToken }}
+  {{- if or (.IDPCaURI) (.IDPCaPem) }} \
+    --auth-provider-arg=idp-certificate-authority=${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt
+  {{- end }}
+{{ end }}
+
+{{ define "set-context" }}
+  kubectl config set-context {{ if not .StaticContextName }}{{ .Username }}-{{ end }}{{ .ClusterName }} \
+    --cluster={{ .ClusterName }} \
+    --user={{ .Username}}-{{.ClusterName }}
+{{ end }}
+
+{{ define "use-context" }}
+  kubectl config use-context {{ if not .StaticContextName }}{{ .Username }}-{{ end }}{{ .ClusterName}}
+{{ end }}

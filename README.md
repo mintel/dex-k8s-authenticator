@@ -5,7 +5,6 @@ A helper web-app which talks to one or more [Dex Identity services](https://gith
 
 The Web UI supports generating tokens against multiple cluster such as Dev / Staging / Production. 
 
-
 ## Also provides
 * Helm Charts
 * SSL Support

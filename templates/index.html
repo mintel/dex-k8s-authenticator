@@ -26,12 +26,12 @@
 
       <div class="theme-panel">
         <h2 class="theme-heading">Generate Kubernetes Token</h2>
-        <div>        
+        <div>
             <p>
               Select which cluster you require a token for:
             </p>
-        
-            {{ range $cluster := .Clusters }}          
+
+            {{ range $cluster := .Clusters }}
 
             <div class="theme-form-row">
                 <p class="theme-form-description">{{$cluster.Description}}</p>
@@ -43,7 +43,7 @@
                 </a>
               </div>
               {{ end }}
-            </div>    
+            </div>
         </div>
       </div>
     </div>
