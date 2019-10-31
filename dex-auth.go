@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 )
 
@@ -48,27 +49,27 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
 
-func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
-	rawIDToken, ok := token.Extra("id_token").(string)
-	if !ok {
-		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
-		return
-	}
+// func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
+// 	rawIDToken, ok := token.Extra("id_token").(string)
+// 	if !ok {
+// 		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
-		return
-	}
-  
-	cluster.renderScript(w, rawIDToken, token.RefreshToken,
-		cluster.Config.IDP_Ca_URI,
-		IdpCaPem,
-		cluster.Config.Logo_Uri,
-		cluster.Config.Web_Path_Prefix,
-		viper.GetString("kubectl_version"),
-		buff.Bytes())
-}
+// 	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
+// 	if err != nil {
+// 		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	cluster.renderScript(w, rawIDToken, token.RefreshToken,
+// 		cluster.Config.IDP_Ca_URI,
+// 		IdpCaPem,
+// 		cluster.Config.Logo_Uri,
+// 		cluster.Config.Web_Path_Prefix,
+// 		viper.GetString("kubectl_version"),
+// 		buff.Bytes())
+// }
 
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -147,11 +148,56 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		IdpCaPem = cast.ToString(content)
 	}
 
-	cluster.renderToken(w, rawIDToken, token.RefreshToken,
+	refreshToken,
+		idpCaURI,
+		idpCaPem,
+		logoURI,
+		webPathPrefix,
+		kubectlVersion,
+		claims := token.RefreshToken,
 		cluster.Config.IDP_Ca_URI,
 		IdpCaPem,
 		cluster.Config.Logo_Uri,
 		cluster.Config.Web_Path_Prefix,
 		viper.GetString("kubectl_version"),
-		buff.Bytes())
+		buff.Bytes()
+
+	var data map[string]interface{}
+	err = json.Unmarshal(claims, &data)
+	if err != nil {
+		panic(err)
+	}
+
+	unix_username := "user"
+	if data["email"] != nil {
+		email := data["email"].(string)
+		unix_username = strings.Split(email, "@")[0]
+	}
+
+	token_data := templateData{
+		IDToken:           rawIDToken,
+		RefreshToken:      refreshToken,
+		RedirectURL:       cluster.Redirect_URI,
+		Claims:            string(claims),
+		Username:          unix_username,
+		Issuer:            data["iss"].(string),
+		ClusterName:       cluster.Name,
+		ShortDescription:  cluster.Short_Description,
+		ClientSecret:      cluster.Client_Secret,
+		ClientID:          cluster.Client_ID,
+		K8sMasterURI:      cluster.K8s_Master_URI,
+		K8sCaURI:          cluster.K8s_Ca_URI,
+		K8sCaPem:          cluster.K8s_Ca_Pem,
+		IDPCaURI:          idpCaURI,
+		IDPCaPem:          idpCaPem,
+		LogoURI:           logoURI,
+		Web_Path_Prefix:   webPathPrefix,
+		StaticContextName: cluster.Static_Context_Name,
+		KubectlVersion:    kubectlVersion}
+
+	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
