@@ -49,36 +49,22 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
 
-// func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
-// 	rawIDToken, ok := token.Extra("id_token").(string)
-// 	if !ok {
-// 		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
-// 	if err != nil {
-// 		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	cluster.renderScript(w, rawIDToken, token.RefreshToken,
-// 		cluster.Config.IDP_Ca_URI,
-// 		IdpCaPem,
-// 		cluster.Config.Logo_Uri,
-// 		cluster.Config.Web_Path_Prefix,
-// 		viper.GetString("kubectl_version"),
-// 		buff.Bytes())
-// }
+func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling script callback for: %s", cluster.Name)
+	cluster.renderCredentials(w, r, "scripttemplate")
+}
 
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling callback for: %s", cluster.Name)
+	cluster.renderCredentials(w, r, "kubeconfig.html")
+}
+
+func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request, t string) {
 	var (
 		err      error
 		token    *oauth2.Token
 		IdpCaPem string
 	)
-
-	log.Printf("Handling callback for: %s", cluster.Name)
 
 	ctx := oidc.ClientContext(r.Context(), cluster.Client)
 	oauth2Config := cluster.oauth2Config(nil)
@@ -195,7 +181,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		StaticContextName: cluster.Static_Context_Name,
 		KubectlVersion:    kubectlVersion}
 
-	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)
+	err = templates.ExecuteTemplate(w, t, token_data)
 
 	if err != nil {
 		log.Fatal(err)

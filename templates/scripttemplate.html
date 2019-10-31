@@ -1,0 +1,11 @@
+{{ define "scripttemplate" }}
+#!/usr/bin/env bash
+{{ template "curl-ca" .}}
+{{ template "copy-ca-crt" .}}
+{{ template "curl-k8-crt" .}}
+{{ template "copy-k8-crt" .}}
+{{ template "create-context" .}}
+{{ template "set-credentials" .}}
+{{ template "set-context" .}}
+{{ template "use-context" .}}
+{{- end }}

@@ -220,6 +220,9 @@ func start_app(config Config) {
 		http.HandleFunc(base_redirect_uri.Path, cluster.handleCallback)
 		log.Printf("Registered callback handler at: %s", base_redirect_uri.Path)
 
+		http.HandleFunc("/script", cluster.handleScript)
+		log.Printf("Registered script callback handler at: %s", "/script")
+
 		login_uri := path.Join(config.Web_Path_Prefix, "login", cluster.Name)
 		http.HandleFunc(login_uri, cluster.handleLogin)
 		log.Printf("Registered login handler at: %s", login_uri)
