@@ -146,6 +146,9 @@ func start_app(config Config) {
 
 	tr := &http.Transport{
 		TLSClientConfig: mTlsConfig,
+
+		// Set proxy callback for proxy support in this transport
+		Proxy: http.ProxyFromEnvironment,
 	}
 
 	// Ensure trailing slash on web-path-prefix

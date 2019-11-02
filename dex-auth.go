@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/coreos/go-oidc"
-	"github.com/spf13/cast"
-	"github.com/spf13/viper"
-	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
 	"time"
+
+	"github.com/coreos/go-oidc"
+	"github.com/spf13/cast"
+	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
 const exampleAppState = "Vgn2lp5QnymFtLntKX5dM8k773PwcM87T4hQtiESC1q8wkUBgw5D3kH0r5qJ"
@@ -55,6 +56,9 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		IdpCaPem string
 	)
 
+	// An error message to that presented to the user
+	userErrorMsg := "Invalid token request"
+
 	log.Printf("Handling callback for: %s", cluster.Name)
 
 	ctx := oidc.ClientContext(r.Context(), cluster.Client)
@@ -63,16 +67,19 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		// Authorization redirect callback from OAuth2 auth flow.
 		if errMsg := r.FormValue("error"); errMsg != "" {
-			http.Error(w, errMsg+": "+r.FormValue("error_description"), http.StatusBadRequest)
+			cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+			log.Printf("handleCallback: request error. error: %s, error_description: %s", errMsg, r.FormValue("error_description"))
 			return
 		}
 		code := r.FormValue("code")
 		if code == "" {
-			http.Error(w, fmt.Sprintf("No code in request: %q", r.Form), http.StatusBadRequest)
+			cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+			log.Printf("handleCallback: no code in request: %q", r.Form)
 			return
 		}
 		if state := r.FormValue("state"); state != exampleAppState {
-			http.Error(w, fmt.Sprintf("Expected state %q got %q", exampleAppState, state), http.StatusBadRequest)
+			cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+			log.Printf("handleCallback: expected state %q got %q", exampleAppState, state)
 			return
 		}
 		token, err = oauth2Config.Exchange(ctx, code)
@@ -80,7 +87,8 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		// Form request from frontend to refresh a token.
 		refresh := r.FormValue("refresh_token")
 		if refresh == "" {
-			http.Error(w, fmt.Sprintf("No refresh_token in request: %q", r.Form), http.StatusBadRequest)
+			cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+			log.Printf("handleCallback: no refresh_token in request: %q", r.Form)
 			return
 		}
 		t := &oauth2.Token{
@@ -89,24 +97,28 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 		token, err = oauth2Config.TokenSource(ctx, t).Token()
 	default:
+		// Return non-HTML error for non GET/POST requests which probably wasn't executed by browser
 		http.Error(w, fmt.Sprintf("Method not implemented: %s", r.Method), http.StatusBadRequest)
 		return
 	}
 
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get token: %v", err), http.StatusInternalServerError)
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusInternalServerError)
+		log.Printf("handleCallback: failed to get token: %v", err)
 		return
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusInternalServerError)
+		log.Printf("handleCallback: no id_token in response: %q", token)
 		return
 	}
 
 	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusInternalServerError)
+		log.Printf("handleCallback: failed to verify ID token: %q, err: %v", rawIDToken, err)
 		return
 	}
 	var claims json.RawMessage
