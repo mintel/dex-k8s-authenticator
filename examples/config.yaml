@@ -74,7 +74,7 @@ listen: http://127.0.0.1:5555
 web_path_prefix: /
 
 # Optional kubectl version which provides a download link to the the binary
-kubectl_version: v1.11.2
+kubectl_version: v1.16.2
 
 # Optional Url to display a logo image
 # logo_uri: http://<path-to-your-logo.png>
