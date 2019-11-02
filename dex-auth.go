@@ -103,21 +103,21 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		cluster.renderHTMLError(w, userErrorMsg, http.StatusInternalServerError)
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
 		log.Printf("handleCallback: failed to get token: %v", err)
 		return
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		cluster.renderHTMLError(w, userErrorMsg, http.StatusInternalServerError)
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
 		log.Printf("handleCallback: no id_token in response: %q", token)
 		return
 	}
 
 	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
 	if err != nil {
-		cluster.renderHTMLError(w, userErrorMsg, http.StatusInternalServerError)
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
 		log.Printf("handleCallback: failed to verify ID token: %q, err: %v", rawIDToken, err)
 		return
 	}
