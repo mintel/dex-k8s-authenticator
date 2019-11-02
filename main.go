@@ -88,6 +88,7 @@ type Config struct {
 	Static_Context_Name  bool
 	Trusted_Root_Ca      []string
 	Trusted_Root_Ca_File string
+	Kubectl_Version      string
 }
 
 func substituteEnvVars(text string) string {

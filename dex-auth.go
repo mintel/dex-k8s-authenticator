@@ -12,7 +12,6 @@ import (
 
 	"github.com/coreos/go-oidc"
 	"github.com/spf13/cast"
-	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -142,6 +141,6 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		IdpCaPem,
 		cluster.Config.Logo_Uri,
 		cluster.Config.Web_Path_Prefix,
-		viper.GetString("kubectl_version"),
+		cluster.Config.Kubectl_Version,
 		buff.Bytes())
 }
