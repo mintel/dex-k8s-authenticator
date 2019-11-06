@@ -118,6 +118,9 @@ func start_app(config Config) {
 	}
 
 	certp, err := x509.SystemCertPool()
+	if err != nil {
+		log.Fatalf("error reading the system cert pool: %v", err)
+	}
 	// Load Inline CA certs
 	if len(config.Trusted_Root_Ca) > 0 {
 		for _, cert := range config.Trusted_Root_Ca {
