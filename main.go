@@ -219,7 +219,7 @@ func start_app(config Config) {
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 
 		if err != nil {
-			fmt.Errorf("Parsing redirect_uri address: %v", err)
+			log.Printf("Parsing redirect_uri address: %v", err)
 			os.Exit(1)
 		}
 
