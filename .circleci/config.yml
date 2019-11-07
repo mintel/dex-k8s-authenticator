@@ -30,7 +30,7 @@ jobs:
       - run:
           name: Helm template
           command: |
-            mkdir -p dex dex-k8s-authenticator
+            mkdir -p /tmp/charts/dex /tmp/charts/dex-k8s-authenticator
             helm template --output-dir /tmp/charts/dex charts/dex
             helm template --output-dir /tmp/charts/dex-k8s-authenticator charts/dex-k8s-authenticator
       - persist_to_workspace:
