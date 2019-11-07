@@ -10,7 +10,7 @@ orbs:
   minikube: ccpgames/minikube@0.0.1
 
 jobs:
-  # Run Helm Lint checks
+  # Run helm lint checks
   helm-lint:
     docker:
       - image: lachlanevenson/k8s-helm
@@ -52,8 +52,8 @@ jobs:
       - run:
           name: K8s Kubeval Lint Check (dex-k8s-authenticator)
           command: kubeval -d /tmp/charts/dex-k8s-authenticator
-
-  # Spin up minikube K8s cluster and run Helm chart & e2e tests on it
+ 
+  # Run helm e2e (can dex-k8s-auth talk to dex)
   helm-e2e:
     machine:
       # Available images https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
@@ -74,7 +74,14 @@ jobs:
           command: helm install --timeout 600 --debug --wait --name dex charts/dex
       - run:
           when: always
-          name: Show created K8s resources (Community)
+          name: Show created K8s resources for Dex
+          command: kubectl get all
+      - run:
+          name: Helm install dex-k8s-authenticator
+          command: helm install --timeout 600 --debug --wait --name dex-k8s-authenticator charts/dex-k8s-authenticator
+      - run:
+          when: always
+          name: Show created K8s resources
           command: kubectl get all
 
 workflows:
