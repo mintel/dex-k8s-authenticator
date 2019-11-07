@@ -21,7 +21,6 @@ jobs:
           command: |
             set -x
             helm init --client-only
-            helm dependency update
       - run:
           name: Helm Lint Dex
           command: helm lint charts/dex
