@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/json"
 	"html/template"
+	text "text/template"
 	"log"
 	"net/http"
 	"strings"
@@ -12,6 +13,7 @@ import (
 
 // compile all templates and cache them
 var templates = template.Must(template.ParseGlob("./templates/*.html"))
+var textTemplates = text.Must(text.ParseGlob("./templates/*.html"))
 
 func renderIndex(w http.ResponseWriter, config *Config) {
 	t, _ := template.ParseFiles("./templates/index.html")

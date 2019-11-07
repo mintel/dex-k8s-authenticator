@@ -4,7 +4,7 @@
 
     <p>Copy this CA Certificate and download it to your .kube directory</p>
     {{ template "command-start" . }}
-    {{ template "curl-ca" . }}
+    {{- template "curl-ca" . -}}
     {{ template "command-end" . }}
   {{ end }}
 

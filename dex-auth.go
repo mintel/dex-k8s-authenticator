@@ -52,15 +52,29 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling script callback for: %s", cluster.Name)
   w.Header().Add("Content-Type", "application/octet-stream")
-	cluster.renderCredentials(w, r, "scripttemplate")
+
+  tokenData := cluster.renderCredentials(w, r)
+
+  err := textTemplates.ExecuteTemplate(w, "scripttemplate", tokenData)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling callback for: %s", cluster.Name)
-	cluster.renderCredentials(w, r, "kubeconfig.html")
+
+  tokenData := cluster.renderCredentials(w, r)
+
+  err := templates.ExecuteTemplate(w, "kubeconfig.html", tokenData)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request, t string) {
+func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request) templateData {
 	var (
 		err      error
 		token    *oauth2.Token
@@ -74,16 +88,16 @@ func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request
 		// Authorization redirect callback from OAuth2 auth flow.
 		if errMsg := r.FormValue("error"); errMsg != "" {
 			http.Error(w, errMsg+": "+r.FormValue("error_description"), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		code := r.FormValue("code")
 		if code == "" {
 			http.Error(w, fmt.Sprintf("No code in request: %q", r.Form), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		if state := r.FormValue("state"); state != exampleAppState {
 			http.Error(w, fmt.Sprintf("Expected state %q got %q", exampleAppState, state), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		token, err = oauth2Config.Exchange(ctx, code)
 	case "POST":
@@ -91,7 +105,7 @@ func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request
 		refresh := r.FormValue("refresh_token")
 		if refresh == "" {
 			http.Error(w, fmt.Sprintf("No refresh_token in request: %q", r.Form), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		t := &oauth2.Token{
 			RefreshToken: refresh,
@@ -100,24 +114,24 @@ func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request
 		token, err = oauth2Config.TokenSource(ctx, t).Token()
 	default:
 		http.Error(w, fmt.Sprintf("Method not implemented: %s", r.Method), http.StatusBadRequest)
-		return
+		return templateData{}
 	}
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to get token: %v", err), http.StatusInternalServerError)
-		return
+		return templateData{}
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
 		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
-		return
+		return templateData{}
 	}
 
 	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
-		return
+		return templateData{}
 	}
 	var claims json.RawMessage
 	idToken.Claims(&claims)
@@ -162,7 +176,7 @@ func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request
 		unix_username = strings.Split(email, "@")[0]
 	}
 
-	token_data := templateData{
+	return templateData{
 		IDToken:           rawIDToken,
 		RefreshToken:      refreshToken,
 		RedirectURL:       cluster.Redirect_URI,
@@ -182,10 +196,4 @@ func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request
 		Web_Path_Prefix:   webPathPrefix,
 		StaticContextName: cluster.Static_Context_Name,
 		KubectlVersion:    kubectlVersion}
-
-	err = templates.ExecuteTemplate(w, t, token_data)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 }
