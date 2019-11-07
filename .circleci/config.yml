@@ -48,7 +48,8 @@ jobs:
           at: /tmp/charts
       - run:
           name: K8s Kubeval Lint Check (dex)
-          command: kubeval < $(find . -type f)
+          #command: kubeval < $(find . -type f)
+          command: ls -R /tmp/charts
           working_directory: dex/templates/
       - run:
           name: K8s Kubeval Lint Check (dex-k8s-authenticator)
