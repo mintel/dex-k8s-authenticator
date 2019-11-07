@@ -1,0 +1,113 @@
+version: 2.1
+
+jobs:
+  acceptance-test:
+    machine:
+      image: circleci/classic:201808-01
+      docker_layer_caching: true
+
+    environment:
+      GO_VERSION: "1.12.9"
+      KIND_VERSION: 0.5.1
+      KIND_CHECKSUM: 9a64f1774cdf24dad5f92e1299058b371c4e3f09d2f9eb281e91ed0777bd1e13
+      K8S_VERSION: v1.13.10
+      K8S_KIND_VERSION: v1.13.10@sha256:2f5f882a6d0527a2284d29042f3a6a07402e1699d792d0d5a9b9a48ef155fa2a
+      KUBECONFIG: /home/circleci/.kube/kind-config-kind
+      GOPATH: /go
+      GOPROXY: https://proxy.golang.org
+      DOCKER_LATEST: 1
+      DOCKER_LATEST_CI: 1
+
+    steps:
+      - run:
+          name: Prepare Kind
+          command: |
+            curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/local/bin/
+            cd /usr/local/bin
+            echo "${KIND_CHECKSUM}  kind" | sha256sum -c
+            cat > /tmp/kind-config.yaml \<<EOF
+            kind: Cluster
+            apiVersion: kind.sigs.k8s.io/v1alpha3
+            networking:
+              apiServerAddress: 0.0.0.0
+            nodes:
+            - role: control-plane
+              image: kindest/node:${K8S_KIND_VERSION}
+            - role: worker
+              image: kindest/node:${K8S_KIND_VERSION}
+            EOF
+
+      - run:
+          name: Start kind
+          background: true
+          command: |
+            kind create cluster --config /tmp/kind-config.yaml
+
+      - run:
+          name: Setup kubectl
+          command: |
+            curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+            mkdir -p ${HOME}/.kube
+
+      - checkout
+      
+      - run:
+          name: Build Docker image
+          command: |
+            make container 
+          no_output_timeout: 30m
+
+      - run:
+          name: Wait for k8s
+          command: |
+            timeout 180s bash \<<EOT
+              set -o pipefail
+              function is_ready()
+              {
+                kubectl get nodes -o json \
+                  | jq '.items[].status.conditions[] | select(.type=="Ready" and .status=="True")'
+              }
+
+              until is_ready
+              do
+                sleep 1
+              done
+            EOT
+            kubectl rollout status -n kube-system daemonset kindnet --timeout=180s
+            kubectl rollout status -n kube-system daemonset kube-proxy --timeout=180s
+            kubectl rollout status -n kube-system deployment coredns --timeout=180s
+
+      - run:
+          name: Install Helm Tiller
+          command: |
+            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
+            echo "Installing Helm Tiller"
+          no_output_timeout: 10m
+
+      - run:
+          name: Install Dex Chart
+          command: |
+            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
+            echo "Installing Dex Chart"
+          no_output_timeout: 10m
+
+      - run:
+          name: Install Dex K8S Authenticator Chart
+          command: |
+            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
+            echo "Installing Dex K8s Authenbticator Chart"
+          no_output_timeout: 10m
+
+      - run:
+          name: Run Acceptance-test
+          command: |
+            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
+            echo "Run some tests..."
+          no_output_timeout: 10m
+
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - acceptance_test
