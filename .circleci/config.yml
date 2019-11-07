@@ -48,11 +48,11 @@ jobs:
           at: /tmp/charts
       - run:
           name: K8s Kubeval Lint Check (dex)
-          command: kubeval $(find . -type f)
+          command: kubeval < $(find . -type f)
           working_directory: dex/templates/
       - run:
           name: K8s Kubeval Lint Check (dex-k8s-authenticator)
-          command: kubeval $(find . -type f)
+          command: kubeval < $(find . -type f)
           working_directory: dex-k8s-authenticator/templates/
 
   # Spin up minikube K8s cluster and run Helm chart & e2e tests on it
