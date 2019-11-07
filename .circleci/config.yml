@@ -45,7 +45,7 @@ jobs:
       - image: garethr/kubeval
     steps:
       - attach_workspace:
-          at: .
+          at: /tmp/charts
       - run:
           name: K8s Kubeval Lint Check (dex)
           command: kubeval < $(find /tmp/charts/dex -type f)
