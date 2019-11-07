@@ -32,13 +32,13 @@ jobs:
           name: Helm template
           command: |
             mkdir -p dex dex-k8s-authenticator
-            helm template --output-dir /tmp/dex charts/dex
-            helm template --output-dir /tmp/dex-k8s-authenticator charts/dex-k8s-authenticator
+            helm template --output-dir /tmp/charts/dex charts/dex
+            helm template --output-dir /tmp/charts/dex-k8s-authenticator charts/dex-k8s-authenticator
       - persist_to_workspace:
-          root: ~/stackstorm-ha/
+          root: /tmp/charts
           paths:
-            - /tmp/dex
-            - /tmp/dex-k8s-authenticator
+            - dex
+            - dex-k8s-authenticator
 
   # Run Kubernetes lint checks
   k8s-lint:
@@ -71,10 +71,6 @@ jobs:
           command: sudo -E minikube start --vm-driver=none --cpus $(nproc) --memory 4096
           environment:
             CHANGE_MINIKUBE_NONE_USER: true
-      - helm/install-helm-on-cluster
-      - run:
-          name: Update stackstorm-ha chart dependencies
-          command: helm dependency update
       - run:
           name: Helm install dex
           command: helm install --timeout 600 --debug --wait --name dex charts/dex
