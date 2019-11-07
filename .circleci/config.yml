@@ -68,6 +68,7 @@ jobs:
           command: sudo -E minikube start --vm-driver=none --cpus $(nproc) --memory 4096
           environment:
             CHANGE_MINIKUBE_NONE_USER: true
+      - helm/install-helm-on-cluster
       - run:
           name: Helm install dex
           command: helm install --timeout 600 --debug --wait --name dex charts/dex
