@@ -51,6 +51,7 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling script callback for: %s", cluster.Name)
+  w.Header().Add("Content-Type", "application/octet-stream")
 	cluster.renderCredentials(w, r, "scripttemplate")
 }
 
@@ -134,6 +135,7 @@ func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request
 		IdpCaPem = cast.ToString(content)
 	}
 
+  // rawIDToken
 	refreshToken,
 		idpCaURI,
 		idpCaPem,
