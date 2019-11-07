@@ -4,7 +4,6 @@ jobs:
   acceptance-test:
     machine:
       image: circleci/classic:201808-01
-      docker_layer_caching: true
 
     environment:
       GO_VERSION: "1.12.9"
