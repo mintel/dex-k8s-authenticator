@@ -1,112 +1,98 @@
 version: 2.1
 
+# Add additional CircleCI Orbs dependencies
+orbs:
+  # https://circleci.com/orbs/registry/orb/circleci/kubernetes
+  kubernetes: circleci/kubernetes@0.3.0
+  # https://circleci.com/orbs/registry/orb/circleci/helm
+  helm: circleci/helm@0.1.2
+  # https://circleci.com/orbs/registry/orb/ccpgames/minikube
+  minikube: ccpgames/minikube@0.0.1
+
 jobs:
-  acceptance-test:
-    machine:
-      image: circleci/classic:201808-01
-
-    environment:
-      GO_VERSION: "1.12.9"
-      KIND_VERSION: 0.5.1
-      KIND_CHECKSUM: 9a64f1774cdf24dad5f92e1299058b371c4e3f09d2f9eb281e91ed0777bd1e13
-      K8S_VERSION: v1.13.10
-      K8S_KIND_VERSION: v1.13.10@sha256:2f5f882a6d0527a2284d29042f3a6a07402e1699d792d0d5a9b9a48ef155fa2a
-      KUBECONFIG: /home/circleci/.kube/kind-config-kind
-      GOPATH: /go
-      GOPROXY: https://proxy.golang.org
-      DOCKER_LATEST: 1
-      DOCKER_LATEST_CI: 1
-
+  # Run Helm Lint checks
+  helm-lint:
+    docker:
+      - image: lachlanevenson/k8s-helm
     steps:
-      - run:
-          name: Prepare Kind
-          command: |
-            curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/local/bin/
-            cd /usr/local/bin
-            echo "${KIND_CHECKSUM}  kind" | sha256sum -c
-            cat > /tmp/kind-config.yaml \<<EOF
-            kind: Cluster
-            apiVersion: kind.sigs.k8s.io/v1alpha3
-            networking:
-              apiServerAddress: 0.0.0.0
-            nodes:
-            - role: control-plane
-              image: kindest/node:${K8S_KIND_VERSION}
-            - role: worker
-              image: kindest/node:${K8S_KIND_VERSION}
-            EOF
-
-      - run:
-          name: Start kind
-          background: true
-          command: |
-            kind create cluster --config /tmp/kind-config.yaml
-
-      - run:
-          name: Setup kubectl
-          command: |
-            curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
-            mkdir -p ${HOME}/.kube
-
       - checkout
-      
       - run:
-          name: Build Docker image
+          name: Prepare Helm
           command: |
-            make container 
-          no_output_timeout: 30m
-
+            set -x
+            helm init --client-only
+            helm dependency update
       - run:
-          name: Wait for k8s
-          command: |
-            timeout 180s bash \<<EOT
-              set -o pipefail
-              function is_ready()
-              {
-                kubectl get nodes -o json \
-                  | jq '.items[].status.conditions[] | select(.type=="Ready" and .status=="True")'
-              }
-
-              until is_ready
-              do
-                sleep 1
-              done
-            EOT
-            kubectl rollout status -n kube-system daemonset kindnet --timeout=180s
-            kubectl rollout status -n kube-system daemonset kube-proxy --timeout=180s
-            kubectl rollout status -n kube-system deployment coredns --timeout=180s
-
+          name: Helm Lint Dex
+          command: helm lint charts/dex
       - run:
-          name: Install Helm Tiller
-          command: |
-            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
-            echo "Installing Helm Tiller"
-          no_output_timeout: 10m
-
+          name: Helm Lint Dex-K8s-Authenticator
+          command: helm lint charts/dex-k8s-authenticator
       - run:
-          name: Install Dex Chart
+          name: Helm template
           command: |
-            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
-            echo "Installing Dex Chart"
-          no_output_timeout: 10m
+            mkdir -p dex dex-k8s-authenticator
+            helm template --output-dir /tmp/dex charts/dex
+            helm template --output-dir /tmp/dex-k8s-authenticator charts/dex-k8s-authenticator
+      - persist_to_workspace:
+          root: ~/stackstorm-ha/
+          paths:
+            - /tmp/dex
+            - /tmp/dex-k8s-authenticator
 
+  # Run Kubernetes lint checks
+  k8s-lint:
+    docker:
+      - image: garethr/kubeval
+    steps:
+      - attach_workspace:
+          at: .
       - run:
-          name: Install Dex K8S Authenticator Chart
-          command: |
-            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
-            echo "Installing Dex K8s Authenbticator Chart"
-          no_output_timeout: 10m
-
+          name: K8s Kubeval Lint Check (dex)
+          command: kubeval $(find . -type f)
+          working_directory: /tmp/dex
       - run:
-          name: Run Acceptance-test
-          command: |
-            kind load docker-image mintel/dex-k8s-ingress-watcher:latest --loglevel debug
-            echo "Run some tests..."
-          no_output_timeout: 10m
+          name: K8s Kubeval Lint Check (dex-k8s-authenticator)
+          command: kubeval $(find . -type f)
+          working_directory: /tmp/dex-k8s-authenticator
 
+  # Spin up minikube K8s cluster and run Helm chart & e2e tests on it
+  helm-e2e:
+    machine:
+      # Available images https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - kubernetes/install
+      - minikube/minikube-install:
+          version: v1.2.0
+      - run:
+          name: Create new K8s cluster
+          command: sudo -E minikube start --vm-driver=none --cpus $(nproc) --memory 4096
+          environment:
+            CHANGE_MINIKUBE_NONE_USER: true
+      - helm/install-helm-on-cluster
+      - run:
+          name: Update stackstorm-ha chart dependencies
+          command: helm dependency update
+      - run:
+          name: Helm install dex
+          command: helm install --timeout 600 --debug --wait --name dex charts/dex
+      - run:
+          when: always
+          name: Show created K8s resources (Community)
+          command: kubectl get all
 
 workflows:
   version: 2
-  ci:
+  helm:
     jobs:
-      - acceptance-test
+      - helm-lint
+      - k8s-lint:
+          requires:
+            - helm-lint
+      - helm-e2e:
+          requires:
+            - helm-lint
+            - k8s-lint
+
