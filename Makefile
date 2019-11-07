@@ -9,7 +9,7 @@ build:
 	@echo "Building $(GOFILES) to ./bin"
 	GOBIN=$(GOBIN) go build -o bin/$(GONAME) $(GOFILES)
 
-container: build
+container:
 	@echo "Building container image"
 	docker build -t ${GONAME}:${TAG} .
 
