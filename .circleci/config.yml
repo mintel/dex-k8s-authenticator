@@ -110,4 +110,4 @@ workflows:
   version: 2
   ci:
     jobs:
-      - acceptance_test
+      - acceptance-test
