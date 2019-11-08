@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 )
 
@@ -48,14 +49,37 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
 
+func (cluster *Cluster) handleScript(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling script callback for: %s", cluster.Name)
+  w.Header().Add("Content-Type", "application/octet-stream")
+
+  tokenData := cluster.renderCredentials(w, r)
+
+  err := textTemplates.ExecuteTemplate(w, "scripttemplate", tokenData)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling callback for: %s", cluster.Name)
+
+  tokenData := cluster.renderCredentials(w, r)
+
+  err := templates.ExecuteTemplate(w, "kubeconfig.html", tokenData)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (cluster *Cluster) renderCredentials(w http.ResponseWriter, r *http.Request) templateData {
 	var (
 		err      error
 		token    *oauth2.Token
 		IdpCaPem string
 	)
-
-	log.Printf("Handling callback for: %s", cluster.Name)
 
 	ctx := oidc.ClientContext(r.Context(), cluster.Client)
 	oauth2Config := cluster.oauth2Config(nil)
@@ -64,16 +88,16 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		// Authorization redirect callback from OAuth2 auth flow.
 		if errMsg := r.FormValue("error"); errMsg != "" {
 			http.Error(w, errMsg+": "+r.FormValue("error_description"), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		code := r.FormValue("code")
 		if code == "" {
 			http.Error(w, fmt.Sprintf("No code in request: %q", r.Form), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		if state := r.FormValue("state"); state != exampleAppState {
 			http.Error(w, fmt.Sprintf("Expected state %q got %q", exampleAppState, state), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		token, err = oauth2Config.Exchange(ctx, code)
 	case "POST":
@@ -81,7 +105,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		refresh := r.FormValue("refresh_token")
 		if refresh == "" {
 			http.Error(w, fmt.Sprintf("No refresh_token in request: %q", r.Form), http.StatusBadRequest)
-			return
+			return templateData{}
 		}
 		t := &oauth2.Token{
 			RefreshToken: refresh,
@@ -90,24 +114,24 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		token, err = oauth2Config.TokenSource(ctx, t).Token()
 	default:
 		http.Error(w, fmt.Sprintf("Method not implemented: %s", r.Method), http.StatusBadRequest)
-		return
+		return templateData{}
 	}
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to get token: %v", err), http.StatusInternalServerError)
-		return
+		return templateData{}
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
 		http.Error(w, "No id_token in token response", http.StatusInternalServerError)
-		return
+		return templateData{}
 	}
 
 	idToken, err := cluster.Verifier.Verify(r.Context(), rawIDToken)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to verify ID token: %v", err), http.StatusInternalServerError)
-		return
+		return templateData{}
 	}
 	var claims json.RawMessage
 	idToken.Claims(&claims)
@@ -125,11 +149,51 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		IdpCaPem = cast.ToString(content)
 	}
 
-	cluster.renderToken(w, rawIDToken, token.RefreshToken,
+  // rawIDToken
+	refreshToken,
+		idpCaURI,
+		idpCaPem,
+		logoURI,
+		webPathPrefix,
+		kubectlVersion,
+		claims := token.RefreshToken,
 		cluster.Config.IDP_Ca_URI,
 		IdpCaPem,
 		cluster.Config.Logo_Uri,
 		cluster.Config.Web_Path_Prefix,
 		viper.GetString("kubectl_version"),
-		buff.Bytes())
+		buff.Bytes()
+
+	var data map[string]interface{}
+	err = json.Unmarshal(claims, &data)
+	if err != nil {
+		panic(err)
+	}
+
+	unix_username := "user"
+	if data["email"] != nil {
+		email := data["email"].(string)
+		unix_username = strings.Split(email, "@")[0]
+	}
+
+	return templateData{
+		IDToken:           rawIDToken,
+		RefreshToken:      refreshToken,
+		RedirectURL:       cluster.Redirect_URI,
+		Claims:            string(claims),
+		Username:          unix_username,
+		Issuer:            data["iss"].(string),
+		ClusterName:       cluster.Name,
+		ShortDescription:  cluster.Short_Description,
+		ClientSecret:      cluster.Client_Secret,
+		ClientID:          cluster.Client_ID,
+		K8sMasterURI:      cluster.K8s_Master_URI,
+		K8sCaURI:          cluster.K8s_Ca_URI,
+		K8sCaPem:          cluster.K8s_Ca_Pem,
+		IDPCaURI:          idpCaURI,
+		IDPCaPem:          idpCaPem,
+		LogoURI:           logoURI,
+		Web_Path_Prefix:   webPathPrefix,
+		StaticContextName: cluster.Static_Context_Name,
+		KubectlVersion:    kubectlVersion}
 }
