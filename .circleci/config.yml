@@ -127,7 +127,7 @@ jobs:
           command: kubectl get ing,svc,ep,deploy,pods
       - run:
           name: k8s describe deployment
-          command: kubectl description deployment dex-k8s-authenticator
+          command: kubectl describe deployment dex-k8s-authenticator
       - run:
           name: test http connection
           command: | 
