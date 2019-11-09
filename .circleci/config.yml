@@ -139,7 +139,7 @@ jobs:
           name: test http result
           command: |
             cat /tmp/output.html
-            grep "Log in to Example Co" /tmp/output.html                                                                                                               
+            grep "Log in to Your Account" /tmp/output.html                                                                                                               
 
 workflows:
   version: 2
