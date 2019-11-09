@@ -118,6 +118,9 @@ func start_app(config Config) {
 	}
 
 	certp, err := x509.SystemCertPool()
+	if err != nil {
+		log.Fatalf("error reading the system cert pool: %v", err)
+	}
 	// Load Inline CA certs
 	if len(config.Trusted_Root_Ca) > 0 {
 		for _, cert := range config.Trusted_Root_Ca {
@@ -216,7 +219,7 @@ func start_app(config Config) {
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 
 		if err != nil {
-			fmt.Errorf("Parsing redirect_uri address: %v", err)
+			log.Printf("Parsing redirect_uri address: %v", err)
 			os.Exit(1)
 		}
 
@@ -356,7 +359,7 @@ func initConfig() {
 		origConfigStr := bytes.NewBuffer(config).String()
 		viper.ReadConfig(bytes.NewBufferString(origConfigStr))
 
-		log.Printf("Using config file:", viper.ConfigFileUsed())
+		log.Printf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
 
