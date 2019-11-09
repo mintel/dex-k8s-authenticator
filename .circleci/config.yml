@@ -10,7 +10,6 @@ orbs:
   minikube: ccpgames/minikube@0.0.1
 
 jobs:
-
   go-tests:
     docker:
       - image: circleci/golang
@@ -127,6 +126,7 @@ workflows:
   version: 2
   helm:
     jobs:
+      - go-tests
       - helm-lint
       - k8s-lint:
           requires:
