@@ -76,7 +76,7 @@ jobs:
             CHANGE_MINIKUBE_NONE_USER: true
       - run:
           name: enable ingress
-          command: minikube addons enable ingress
+          command: sudo minikube addons enable ingress
       - helm/install-helm-on-cluster
       - run: 
           name: generate chart overrides
