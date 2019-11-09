@@ -134,13 +134,10 @@ workflows:
       - dex-k8s-auth-go-tests
       - helm-lint:
           requires:
-            - go-tests
+            - dex-k8s-auth-go-tests
       - k8s-lint:
           requires:
             - helm-lint
       - helm-e2e:
           requires:
-            - k8s-lint
             - helm-lint
-            - dex-k8s-auth-go-tests
-
