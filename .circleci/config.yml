@@ -10,7 +10,7 @@ orbs:
   minikube: ccpgames/minikube@0.0.1
 
 jobs:
-  dex-k8s-auth-go-tests:
+  dex_k8s_auth_gotests:
     docker:
       - image: circleci/golang
     steps:
@@ -29,7 +29,7 @@ jobs:
             test -z $output
 
   # Run helm lint checks
-  helm-lint:
+  helm_lint:
     docker:
       - image: lachlanevenson/k8s-helm
     steps:
@@ -58,7 +58,7 @@ jobs:
             - dex-k8s-authenticator
 
   # Run Kubernetes lint checks
-  k8s-lint:
+  k8s_lint:
     docker:
       - image: garethr/kubeval
     steps:
@@ -72,7 +72,7 @@ jobs:
           command: kubeval -d /tmp/charts/dex-k8s-authenticator
  
   # Run helm e2e (can dex-k8s-auth talk to dex)
-  helm-e2e:
+  helm_e2e:
     machine:
       # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
       image: ubuntu-1604:201903-01
@@ -125,19 +125,24 @@ jobs:
 
       - run:
           name: test http result
-          command: grep "Log in to Example Co" /tmp/output.html                                                                                                               
+          command: |
+            cat /tmp/output.html
+            grep "Log in to Example Co" /tmp/output.html                                                                                                               
 
 workflows:
   version: 2
   test-suite:
     jobs:
-      - dex-k8s-auth-go-tests
-      - helm-lint:
+      - dex_k8s_auth_gotests
+      - helm_lint:
           requires:
-            - dex-k8s-auth-go-tests
-      - k8s-lint:
+            - dex_k8s_auth_gotests
+      - k8s_lint:
           requires:
-            - helm-lint
-      - helm-e2e:
+            - dex_k8s_auth_gotests
+            - helm_lint
+      - helm_e2e:
           requires:
-            - helm-lint
+            - dex_k8s_auth_gotests
+            - k8s_lint
+            - helm_lint
