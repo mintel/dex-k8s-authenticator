@@ -356,7 +356,7 @@ func initConfig() {
 		origConfigStr := bytes.NewBuffer(config).String()
 		viper.ReadConfig(bytes.NewBufferString(origConfigStr))
 
-		log.Printf("Using config file: %v", viper.ConfigFileUsed())
+		log.Printf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
 
