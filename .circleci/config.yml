@@ -126,8 +126,13 @@ jobs:
           name: k8s resources
           command: kubectl get ing,svc,ep,deploy,pods
       - run:
+          name: k8s describe deployment
+          command: kubectl description deployment dex-k8s-authenticator
+      - run:
           name: test http connection
-          command: curl -L "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
+          command: | 
+            sleep 5
+            curl -L "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
           #command: curl -Lsf  "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
 
       - run:
