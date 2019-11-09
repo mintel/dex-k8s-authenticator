@@ -17,11 +17,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Add deps
-          command: |
-            apt-get update
-            apt-get install gettext-base
-      - run:
           name: Prepare Helm
           command: |
             set -x
@@ -61,10 +56,15 @@ jobs:
   # Run helm e2e (can dex-k8s-auth talk to dex)
   helm-e2e:
     machine:
-      # Available images https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
+      # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - run:
+          name: Add deps
+          command: |
+            apt-get update
+            apt-get install gettext-base
       - kubernetes/install
       - minikube/minikube-install:
           version: v1.2.0
