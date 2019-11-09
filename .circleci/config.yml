@@ -126,7 +126,6 @@ jobs:
       - run:
           name: test http result
           command: |
-            ls -l /tmp/
             cat /tmp/output.html
             grep "Log in to Example Co" /tmp/output.html                                                                                                               
 
