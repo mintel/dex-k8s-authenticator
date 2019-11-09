@@ -44,8 +44,7 @@ config: |-
     name: "my-cluster"
     secret: "pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok"
     redirectURIs:
-    - http://dex-k8s-authenticator.${CLUSTER_IP}/callback/my-cluster
-  
+    - http://dex-k8s-authenticator.${CLUSTER_IP}.nip.io/callback/my-cluster
   enablePasswordDB: True
   staticPasswords:
   - email: "admin@example.com"
