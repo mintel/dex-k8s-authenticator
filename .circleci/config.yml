@@ -99,7 +99,7 @@ jobs:
           command: kubectl rollout status deploy dex-k8s-authenticator -w
       - run:
           name: test http connection
-          command: curl -Lsf dex-k8s-auth.$(minikube ip).nip.io/login/my-cluster > /tmp/output.html                                                   
+          command: curl -Lsf http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster > /tmp/output.html                                                   
       - run:
           name: test http result
           command: grep "Log in to Example Co" /tmp/output.html                                                                                                               

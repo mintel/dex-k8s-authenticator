@@ -20,4 +20,4 @@ ingress:
   enabled: true
   path: /
   hosts:
-    - dex-k8s-auth.${CLUSTER_IP}.nip.io
+    - dex-k8s-authenticator.${CLUSTER_IP}.nip.io
