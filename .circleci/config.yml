@@ -142,5 +142,5 @@ workflows:
           requires:
             - k8s-lint
             - helm-lint
-            - go-tests
+            - dex-k8s-auth-go-tests
 
