@@ -1,6 +1,6 @@
 version: 2.1
 
-# Add additional CircleCI Orbs dependencies
+# Required orbs
 orbs:
   # https://circleci.com/orbs/registry/orb/circleci/kubernetes
   kubernetes: circleci/kubernetes@0.3.0
@@ -10,7 +10,8 @@ orbs:
   minikube: ccpgames/minikube@0.0.1
 
 jobs:
-  dex_k8s_auth_gotests:
+  # Run golang checks 
+  golang_checks:
     docker:
       - image: circleci/golang
     steps:
@@ -71,10 +72,9 @@ jobs:
           name: K8s Kubeval Lint Check (dex-k8s-authenticator)
           command: kubeval -d /tmp/charts/dex-k8s-authenticator
  
-  # Run helm e2e (can dex-k8s-auth talk to dex)
+  # Run helm e2e checks
   helm_e2e:
     machine:
-      # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
       image: ubuntu-1604:201903-01
     steps:
       - checkout
@@ -88,6 +88,7 @@ jobs:
       - minikube/minikube-install:
           version: v1.2.0
       - run:
+          # Create a minikube cluster to install helm charts into
           name: create k8s cluster
           command: sudo -E minikube start --vm-driver=none --cpus $(nproc) --memory 4096
           environment:
@@ -96,13 +97,14 @@ jobs:
           name: enable ingress
           command: sudo minikube addons enable ingress
       - helm/install-helm-on-cluster
-
       - run:
+          # Build a new image locally - use the minikube docker-env so that helm can pull the image
           name: build ci image
           command: |
             eval $(minikube docker-env)
             docker build -t mintel/dex-k8s-authenticator:${CIRCLE_SHA1} .
-      - run: 
+      - run:
+          # Generate helm chart overrides to use the minikube-ip and newly built image
           name: generate chart overrides
           command: |
             set -x
@@ -132,9 +134,7 @@ jobs:
           name: test http connection
           command: | 
             sleep 5
-            curl -L "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
-          #command: curl -Lsf  "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
-
+            curl -Lsf "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
       - run:
           name: test http result
           command: |
@@ -145,16 +145,13 @@ workflows:
   version: 2
   test-suite:
     jobs:
-      - dex_k8s_auth_gotests
+      - golang_checks
       - helm_lint:
           requires:
             - dex_k8s_auth_gotests
       - k8s_lint:
           requires:
-            - dex_k8s_auth_gotests
             - helm_lint
       - helm_e2e:
           requires:
-            - dex_k8s_auth_gotests
             - k8s_lint
-            - helm_lint
