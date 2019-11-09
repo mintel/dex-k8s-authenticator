@@ -129,7 +129,7 @@ workflows:
   helm:
     jobs:
       - go-tests
-      - helm-lint
+      - helm-lint:
           requires:
             - go-tests
       - k8s-lint:
