@@ -1,7 +1,7 @@
 package main
 
 import (
-"bytes"
+	"bytes"
 	"context"
 	"crypto/tls"
 	"crypto/x509"
