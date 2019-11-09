@@ -33,7 +33,7 @@ COPY --from=0 /app/templates /app/templates
 # The entrypoint will copy them and run update-ca-certificates at startup
 RUN mkdir -p /certs
 
-WORKDIR /app
+xWORKDIR /app
 
 COPY entrypoint.sh /
 RUN chmod a+x /entrypoint.sh
