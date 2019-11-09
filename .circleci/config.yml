@@ -148,7 +148,7 @@ workflows:
       - golang_checks
       - helm_lint:
           requires:
-            - dex_k8s_auth_gotests
+            - golang_checks
       - k8s_lint:
           requires:
             - helm_lint
