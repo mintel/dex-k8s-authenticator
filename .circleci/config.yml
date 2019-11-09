@@ -96,11 +96,18 @@ jobs:
           name: enable ingress
           command: sudo minikube addons enable ingress
       - helm/install-helm-on-cluster
+
+      - run:
+          name: build ci image
+          command: |
+            eval $(minikube docker-env)
+            docker build -t mintel/dex-k8s-authenticator:${CIRCLE_SHA1}
       - run: 
           name: generate chart overrides
           command: |
             set -x
             export CLUSTER_IP=$(minikube ip)
+            export CI_TAG=$CIRCLE_SHA1
             envsubst < ./tests/e2e/helm/dex-overrides.yaml > /tmp/dex-overrides.yaml
             envsubst < ./tests/e2e/helm/dex-k8s-auth-overrides.yaml > /tmp/dex-k8s-auth-overrides.yaml
       - run:
