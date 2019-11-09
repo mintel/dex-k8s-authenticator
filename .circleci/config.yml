@@ -63,8 +63,9 @@ jobs:
       - run:
           name: Add deps
           command: |
-            apt-get update
-            apt-get install gettext-base
+            set -x
+            sudo apt-get update -y
+            sudo apt-get install -y gettext-base
       - kubernetes/install
       - minikube/minikube-install:
           version: v1.2.0
