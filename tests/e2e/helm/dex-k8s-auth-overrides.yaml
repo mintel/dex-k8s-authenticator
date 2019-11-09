@@ -1,0 +1,23 @@
+image:
+  repository: mintel/dex-k8s-authenticator
+  tag: 1.2.0
+  pullPolicy: Always
+
+dexK8sAuthenticator:
+  port: 5555
+  clusters:
+  - name: my-cluster
+    short_description: "My Cluster"
+    description: "Example Cluster Long Description..."
+    client_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+    issuer: http://dex.${CLUSTER_IP}.nip.io
+    k8s_master_uri: https://my-cluster.example.com
+    client_id: my-cluster
+    redirect_uri: http://dex-k8s-auth.${CLUSTER_IP}.nip.io/callback/my-cluster
+    k8s_ca_uri: https://url-to-your-ca.crt
+
+ingress:
+  enabled: true
+  path: /
+  hosts:
+    - dex-k8s-auth.${CLUSTER_IP}.nip.io
