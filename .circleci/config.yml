@@ -101,7 +101,7 @@ jobs:
           name: build ci image
           command: |
             eval $(minikube docker-env)
-            docker build -t mintel/dex-k8s-authenticator:${CIRCLE_SHA1}
+            docker build -t mintel/dex-k8s-authenticator:${CIRCLE_SHA1} .
       - run: 
           name: generate chart overrides
           command: |
