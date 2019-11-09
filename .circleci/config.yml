@@ -76,7 +76,7 @@ jobs:
           name: generate chart overrides
           command: |
             set -x
-            apt add -q gettext
+            apk add -q gettext
             export CLUSTEr_IP=$(minikube ip)
             envsubst < ./tests/e2e/helm/dex-overrides.yaml > /tmp/dex-overrides.yaml
             envsubst < ./tests/e2e/helm/dex-k8s-auth-overrides.yaml > /tmp/dex-k8s-auth-overrides.yaml
