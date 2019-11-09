@@ -90,15 +90,15 @@ jobs:
           command: helm install --debug --name dex charts/dex -f /tmp/dex-overrides.yaml
       - run:
           when: always
-          name: k8s resources
-          command: kubectl get all
+          name: check rollout status
+          command: kubectl rollout status deploy dex -w
       - run:
           name: helm install dex-k8s-authenticator
           command: helm install --debug --name dex-k8s-authenticator charts/dex-k8s-authenticator -f /tmp/dex-k8s-auth-overrides.yaml
       - run:
           when: always
-          name: k8s resources
-          command: kubectl get all
+          name: check rollout status
+          command: kubectl rollout status deploy dex-k8s-auth-dex-k8s-authenticator -w
 
 workflows:
   version: 2
