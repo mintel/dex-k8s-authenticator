@@ -97,16 +97,6 @@ jobs:
           command: helm install --debug --name dex-k8s-authenticator charts/dex-k8s-authenticator -f /tmp/dex-k8s-auth-overrides.yaml
       - run:
           when: always
-          name: check rollout status1
-          command: |
-            sleep 10
-            kubectl get pods
-            kubectl get deploy dex-k8s-authenticator -o yaml
-            kubectl get ing
-            kubectl get ep
-            curl http://dex.${CLUSTER_IP}.nip.io/healthz
-      - run:
-          when: always
           name: check rollout status
           command: kubectl rollout status deploy dex-k8s-authenticator -w
 
