@@ -98,7 +98,7 @@ jobs:
       - run:
           when: always
           name: check rollout status
-          command: kubectl rollout status deploy dex-k8s-auth-dex-k8s-authenticator -w
+          command: kubectl rollout status deploy dex-k8s-authenticator -w
 
 workflows:
   version: 2
