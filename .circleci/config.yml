@@ -87,14 +87,14 @@ jobs:
             envsubst < ./tests/e2e/helm/dex-k8s-auth-overrides.yaml > /tmp/dex-k8s-auth-overrides.yaml
       - run:
           name: helm install dex
-          command: helm install --timeout 600 --debug --wait --name dex charts/dex -f /tmp/dex-overrides.yaml
+          command: helm install --debug --name dex charts/dex -f /tmp/dex-overrides.yaml
       - run:
           when: always
           name: k8s resources
           command: kubectl get all
       - run:
           name: helm install dex-k8s-authenticator
-          command: helm install --timeout 600 --debug --wait --name dex-k8s-authenticator charts/dex-k8s-authenticator -f /tmp/dex-k8s-auth-overrides.yaml
+          command: helm install --debug --name dex-k8s-authenticator charts/dex-k8s-authenticator -f /tmp/dex-k8s-auth-overrides.yaml
       - run:
           when: always
           name: k8s resources
