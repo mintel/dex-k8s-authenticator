@@ -9,24 +9,23 @@ orbs:
   # https://circleci.com/orbs/registry/orb/ccpgames/minikube
   minikube: ccpgames/minikube@0.0.1
 
-jobs:
-  go-tests:
-    docker:
-      - image: circleci/golang
-    steps:
-      - checkout
-      - run:
-          name: gotestsum
-          command: |
-            set -x
-            gotestsum
-      - run:
-          name: gofmt
-          command: |
-            set -x
-            output=$(gofmt -l -e -d .)
-            echo $output
-            test -z $output
+go-tests:
+  docker:
+    - image: circleci/golang
+  steps:
+    - checkout
+    - run:
+        name: gotestsum
+        command: |
+          set -x
+          gotestsum
+    - run:
+        name: gofmt
+        command: |
+          set -x
+          output=$(gofmt -l -e -d .)
+          echo $output
+          test -z $output
 
   # Run helm lint checks
   helm-lint:
@@ -128,6 +127,8 @@ workflows:
     jobs:
       - go-tests
       - helm-lint
+          requires:
+            - go-tests
       - k8s-lint:
           requires:
             - helm-lint
