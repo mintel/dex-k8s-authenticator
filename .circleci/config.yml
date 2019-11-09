@@ -120,14 +120,16 @@ jobs:
           command: kubectl get ing,svc,ep,deploy,pods
       - run:
           name: test http connection
-          command: curl -Lsf http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster > /tmp/output.html                                                   
+          command: curl -L "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
+          #command: curl -Lsf  "http://dex-k8s-authenticator.$(minikube ip).nip.io/login/my-cluster" > /tmp/output.html
+
       - run:
           name: test http result
           command: grep "Log in to Example Co" /tmp/output.html                                                                                                               
 
 workflows:
   version: 2
-  helm:
+  test-suite:
     jobs:
       - go-tests
       - helm-lint:
@@ -138,6 +140,5 @@ workflows:
             - helm-lint
       - helm-e2e:
           requires:
-            - helm-lint
             - k8s-lint
 
