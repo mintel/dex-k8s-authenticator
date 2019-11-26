@@ -216,11 +216,12 @@ func start_app(config Config) {
 			os.Exit(1)
 		}
 
+
 		// Each cluster gets a different login and callback URL
 		http.HandleFunc(base_redirect_uri.Path, cluster.handleCallback)
 		log.Printf("Registered callback handler at: %s", base_redirect_uri.Path)
 
-		http.HandleFunc("/script", cluster.handleScript)
+		http.HandleFunc("/script"+cluster.Name, cluster.handleScript)
 		log.Printf("Registered script callback handler at: %s", "/script")
 
 		login_uri := path.Join(config.Web_Path_Prefix, "login", cluster.Name)
