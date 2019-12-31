@@ -32,7 +32,7 @@ jobs:
   # Run helm lint checks
   helm_lint:
     docker:
-      - image: lachlanevenson/k8s-helm
+      - image: lachlanevenson/k8s-helm:v2.16.1
     steps:
       - checkout
       - run:
@@ -61,7 +61,7 @@ jobs:
   # Run Kubernetes lint checks
   k8s_lint:
     docker:
-      - image: garethr/kubeval
+      - image: garethr/kubeval:0.14.0
     steps:
       - attach_workspace:
           at: /tmp/charts
