@@ -1,5 +1,7 @@
 # Dex K8s Authenticator
 
+[![CircleCI](https://circleci.com/gh/mintel/dex-k8s-authenticator.svg?style=svg)](https://circleci.com/gh/mintel/dex-k8s-authenticator)
+
 A helper web-app which talks to one or more [Dex Identity services](https://github.com/coreos/dex) to generate
 `kubectl` commands for creating and modifying a `kubeconfig`.
 
