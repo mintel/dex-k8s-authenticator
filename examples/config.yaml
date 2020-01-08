@@ -2,6 +2,9 @@ clusters:
   # Specify 1 or more clusters
   - name: example-cluster
 
+    # Default namespace (optional)
+    namespace: my-namespace
+
     # Descriptions used in the WebUI
     short_description: "Example Cluster"
     description: "Example Cluster Long Description..."
