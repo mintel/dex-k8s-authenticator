@@ -43,6 +43,7 @@ type templateData struct {
 	Web_Path_Prefix   string
 	StaticContextName bool
 	KubectlVersion    string
+	Namespace         string
 }
 
 func (cluster *Cluster) renderToken(w http.ResponseWriter,
@@ -86,6 +87,7 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 		LogoURI:           logoURI,
 		Web_Path_Prefix:   webPathPrefix,
 		StaticContextName: cluster.Static_Context_Name,
+		Namespace:         cluster.Namespace,
 		KubectlVersion:    kubectlVersion}
 
 	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)

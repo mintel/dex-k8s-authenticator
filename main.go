@@ -56,6 +56,7 @@ func (d debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 // Define each cluster
 type Cluster struct {
 	Name                string
+	Namespace           string
 	Short_Description   string
 	Description         string
 	Issuer              string

@@ -97,7 +97,7 @@ EOF</code></pre>
       <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
     </button>
     <pre><code class="hljs">kubectl config set-context {{ if not .StaticContextName }}{{ .Username }}-{{ end }}{{ .ClusterName }} \
-    --cluster={{ .ClusterName }} \
+    --cluster={{ .ClusterName }}{{ if .Namespace }} --namespace={{ .Namespace }}{{ end }} \
     --user={{ .Username}}-{{.ClusterName }}</code></pre>
   </div>
 
