@@ -66,6 +66,7 @@ type Cluster struct {
 	K8s_Ca_URI          string
 	K8s_Ca_Pem          string
 	Static_Context_Name bool
+	Scopes              []string
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
@@ -213,6 +214,10 @@ func start_app(config Config) {
 				}
 				return false
 			}()
+		}
+
+		if len(cluster.Scopes) == 0 {
+			cluster.Scopes = []string{"openid", "profile", "email", "offline_access", "groups"}
 		}
 
 		cluster.Config = config
