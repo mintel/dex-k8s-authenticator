@@ -17,13 +17,13 @@ import (
 
 const exampleAppState = "Vgn2lp5QnymFtLntKX5dM8k773PwcM87T4hQtiESC1q8wkUBgw5D3kH0r5qJ"
 
-func (cluster *Cluster) oauth2Config(scopes []string) *oauth2.Config {
+func (cluster *Cluster) oauth2Config() *oauth2.Config {
 
 	return &oauth2.Config{
 		ClientID:     cluster.Client_ID,
 		ClientSecret: cluster.Client_Secret,
 		Endpoint:     cluster.Provider.Endpoint(),
-		Scopes:       scopes,
+		Scopes:       cluster.Scopes,
 		RedirectURL:  cluster.Redirect_URI,
 	}
 }
@@ -38,12 +38,8 @@ func (config *Config) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
-	var scopes []string
-
-	scopes = append(scopes, "openid", "profile", "email", "offline_access", "groups")
-
 	log.Printf("Handling login-uri for: %s", cluster.Name)
-	authCodeURL := cluster.oauth2Config(scopes).AuthCodeURL(exampleAppState, oauth2.AccessTypeOffline)
+	authCodeURL := cluster.oauth2Config().AuthCodeURL(exampleAppState, oauth2.AccessTypeOffline)
 	log.Printf("Redirecting post-loginto: %s", authCodeURL)
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
@@ -61,7 +57,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling callback for: %s", cluster.Name)
 
 	ctx := oidc.ClientContext(r.Context(), cluster.Client)
-	oauth2Config := cluster.oauth2Config(nil)
+	oauth2Config := cluster.oauth2Config()
 	switch r.Method {
 	case "GET":
 		// Authorization redirect callback from OAuth2 auth flow.

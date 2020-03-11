@@ -17,6 +17,7 @@ An example configuration is available [here](../examples/config.yaml)
 | k8s_master_uri         | no       | cluster | Kubernetes api-server endpoint (used in kubeconfig)                                   |
 | k8s_ca_uri             | no       | cluster | A url pointing to the CA for generating 'certificate-authority' option in kubeconfig  |
 | k8s_ca_pem             | no       | cluster | The CA for your k8s server (used in generating instructions)                          |
+| scopes                 | no       | cluster | A list OpenID scopes to request                                                       |
 | tls_cert               | no       | root    | Path to TLS cert if SSL enabled                                                       |
 | tls_key                | no       | root    | Path to TLS key if SSL enabled                                                        |
 | idp_ca_uri             | no       | root    | A url pointing to the CA for generating 'idp-certificate-authority' in the kubeconfig |
@@ -61,6 +62,10 @@ clusters:
     client_id: example-cluster-client-id
     issuer:  http://127.0.0.1:5556
     k8s_master_uri: https://your-k8s-master.cluster
+    scopes: 
+      - email
+      - profile
+      - openid
 
 # A path-prefix from which to serve requests and assets
 web_path_prefix: /dex-auth
