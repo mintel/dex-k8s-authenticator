@@ -22,30 +22,31 @@
       {{ end }}
     </div>
 
-    <div class="dex-container">
-
-      <div class="theme-panel">
-        <h2 class="theme-heading">Generate Kubernetes Token</h2>
-        <div>        
-            <p>
-              Select which cluster you require a token for:
-            </p>
-        
-            {{ range $cluster := .Clusters }}          
-
-            <div class="theme-form-row">
-                <p class="theme-form-description">{{$cluster.Description}}</p>
-                <a href="{{ $.Web_Path_Prefix }}login/{{$cluster.Name}}" target="_self">
-                  <button class="dex-btn theme-btn-provider">
-                    <span class="dex-btn-icon dex-btn-icon--local"></span>
-                    <span class="dex-btn-text">{{$cluster.Short_Description}}</span>
-                  </button>
-                </a>
-              </div>
-              {{ end }}
-            </div>    
+    <div class="groups-container">
+    {{ $length := len .Groups }}{{ if eq $length 1 }}<div></div>{{ end }}
+    {{ range $group, $clusters := .Groups }}
+      <div class="dex-container">
+        <div class="theme-panel">
+          <h2 class="theme-heading">{{ $group }} clusters</h2>
+          <div>        
+              <p>
+                Select which cluster you require a token for:
+              </p>
+                {{ range $cluster := $clusters }}          
+                <div class="theme-form-row">
+                    <p class="theme-form-description">{{$cluster.Description}}</p>
+                    <a href="{{ $.Web_Path_Prefix }}login/{{$cluster.Name}}" target="_self">
+                      <button class="dex-btn theme-btn-provider">
+                        <span class="dex-btn-icon dex-btn-icon--local"></span>
+                        <span class="dex-btn-text">{{$cluster.Short_Description}}</span>
+                      </button>
+                    </a>
+                </div>
+                {{ end }}
+          </div>    
         </div>
       </div>
+      {{ end }}
     </div>
   </body>
 </html>

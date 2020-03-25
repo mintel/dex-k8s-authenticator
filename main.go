@@ -67,6 +67,7 @@ type Cluster struct {
 	K8s_Ca_Pem          string
 	Static_Context_Name bool
 	Scopes              []string
+	Group               string
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
@@ -79,6 +80,7 @@ type Cluster struct {
 // Define our configuration
 type Config struct {
 	Clusters             []Cluster
+	Groups               map[string][]Cluster
 	Listen               string
 	Web_Path_Prefix      string
 	TLS_Cert             string
@@ -218,6 +220,18 @@ func start_app(config Config) {
 
 		if len(cluster.Scopes) == 0 {
 			cluster.Scopes = []string{"openid", "profile", "email", "offline_access", "groups"}
+		}
+
+		// Any cluster without a group will be in the 'default' group
+		if cluster.Group == "" {
+			cluster.Group = "default"
+		}
+
+		// Sort clusters by group label
+		if _, ok := config.Groups[cluster.Group]; ok {
+			config.Groups[cluster.Group] = append(config.Groups[cluster.Group], cluster)
+		} else {
+			config.Groups[cluster.Group] = []Cluster{cluster}
 		}
 
 		cluster.Config = config

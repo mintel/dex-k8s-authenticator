@@ -66,6 +66,7 @@ clusters:
       - email
       - profile
       - openid
+    group: dev
 
 # A path-prefix from which to serve requests and assets
 web_path_prefix: /dex-auth
