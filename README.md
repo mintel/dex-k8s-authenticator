@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/mintel/dex-k8s-authenticator.svg?style=svg)](https://circleci.com/gh/mintel/dex-k8s-authenticator)
 
-A helper web-app which talks to one or more [Dex Identity services](https://github.com/coreos/dex) to generate
+A helper web-app which talks to one or more [Dex Identity services](https://github.com/dexidp/dex) to generate
 `kubectl` commands for creating and modifying a `kubeconfig`.
 
 The Web UI supports generating tokens against multiple cluster such as Dev / Staging / Production. 
