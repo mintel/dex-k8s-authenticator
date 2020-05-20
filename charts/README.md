@@ -12,7 +12,7 @@ Each install of `dex` and/or `dex-k8s-authenticator` can support multiple Kubern
 So you can install one of each for all your clusters, one in each cluster, or any combination.
 
 ```
-git clone git@github.com:mintel/dex-k8s-authenticator.git
+git clone https://github.com/mintel/dex-k8s-authenticator.git
 helm inspect values charts/dex > dex.yaml
 helm inspect values charts/dex-k8s-authenticator > dex-k8s-authenticator.yaml
 ```
