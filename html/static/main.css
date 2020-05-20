@@ -16,11 +16,16 @@ pre {
   overflow-wrap: break-word;
 }
 
+.groups-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1em;
+  grid-auto-rows: 1fr;
+}
+
 .dex-container {
   color: #333;
   margin: 45px auto;
-  max-width: 500px;
-  min-width: 320px;
   text-align: center;
 }
 
@@ -28,7 +33,6 @@ pre {
   color: #333;
   margin: 45px auto;
   max-width: 90%;
-  min-width: 320px;
   text-align: left;
 }
 
