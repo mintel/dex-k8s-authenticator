@@ -175,7 +175,8 @@ func start_app(config Config) {
 		provider, err := oidc.NewProvider(ctx, cluster.Issuer)
 
 		if err != nil {
-			log.Fatalf("Failed to query provider %q: %v\n", cluster.Issuer, err)
+			log.Printf("Failed to query provider %q: %v\n", cluster.Issuer, err)
+			continue
 		}
 
 		cluster.Provider = provider
@@ -215,7 +216,6 @@ func start_app(config Config) {
 			fmt.Errorf("Parsing redirect_uri address: %v", err)
 			os.Exit(1)
 		}
-
 
 		// Each cluster gets a different login and callback URL
 		http.HandleFunc(base_redirect_uri.Path, cluster.handleCallback)
