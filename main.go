@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-oidc"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -65,6 +66,7 @@ type Cluster struct {
 	K8s_Master_URI      string
 	K8s_Ca_URI          string
 	K8s_Ca_Pem          string
+	K8s_Ca_Pem_File     string
 	Static_Context_Name bool
 	Scopes              []string
 
@@ -218,6 +220,16 @@ func start_app(config Config) {
 
 		if len(cluster.Scopes) == 0 {
 			cluster.Scopes = []string{"openid", "profile", "email", "offline_access", "groups"}
+		}
+
+		if cluster.K8s_Ca_Pem != "" {
+			cluster.K8s_Ca_Pem = cluster.K8s_Ca_Pem
+		} else if cluster.K8s_Ca_Pem_File != "" {
+			content, err := ioutil.ReadFile(cluster.K8s_Ca_Pem_File)
+			if err != nil {
+				log.Fatalf("Failed to load CA from file %s, %s", cluster.K8s_Ca_Pem_File, err)
+			}
+			cluster.K8s_Ca_Pem = cast.ToString(content)
 		}
 
 		cluster.Config = config
