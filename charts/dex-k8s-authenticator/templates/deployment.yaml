@@ -62,7 +62,7 @@ spec:
 {{ toYaml .Values.resources | indent 10 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 6 }}
+{{ toYaml . | indent 8 }}
     {{- end }}
     {{- with .Values.affinity }}
       affinity:
@@ -70,7 +70,7 @@ spec:
     {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 6 }}
+{{ toYaml . | indent 8 }}
     {{- end }}
       volumes:
       - name: config
