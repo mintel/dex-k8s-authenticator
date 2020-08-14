@@ -3,6 +3,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -11,8 +12,25 @@ import (
 	"strings"
 )
 
+func base64decode(v string) string {
+	data, err := base64.StdEncoding.DecodeString(v)
+	if err != nil {
+		return err.Error()
+	}
+	return string(data)
+}
+
+func base64encode(v string) string {
+	return base64.StdEncoding.EncodeToString([]byte(v))
+}
+
+var templateFuncMap = template.FuncMap{
+	"b64dec": base64decode,
+	"b64enc": base64encode,
+}
+
 // compile all templates and cache them
-var templates = template.Must(template.ParseGlob("./templates/*.html"))
+var templates = template.Must(template.New("all").Funcs(templateFuncMap).ParseGlob("./templates/*.html"))
 
 func renderIndex(w http.ResponseWriter, config *Config) {
 	t, _ := template.ParseFiles("./templates/index.html")
@@ -24,26 +42,27 @@ func renderIndex(w http.ResponseWriter, config *Config) {
 }
 
 type templateData struct {
-	IDToken           string
-	RefreshToken      string
-	RedirectURL       string
-	Claims            string
-	Username          string
-	Issuer            string
-	ClusterName       string
-	ShortDescription  string
-	ClientSecret      string
-	ClientID          string
-	K8sMasterURI      string
-	K8sCaURI          string
-	K8sCaPem          string
-	IDPCaURI          string
-	IDPCaPem          string
-	LogoURI           string
-	Web_Path_Prefix   string
-	StaticContextName bool
-	KubectlVersion    string
-	Namespace         string
+	IDToken                    string
+	RefreshToken               string
+	RedirectURL                string
+	Claims                     string
+	Username                   string
+	Issuer                     string
+	ClusterName                string
+	ShortDescription           string
+	ClientSecret               string
+	ClientID                   string
+	K8sMasterURI               string
+	K8sCaURI                   string
+	K8sCaPem                   string
+	IDPCaURI                   string
+	IDPCaPem                   string
+	LogoURI                    string
+	Web_Path_Prefix            string
+	StaticContextName          bool
+	KubectlVersion             string
+	Namespace                  string
+	ShowAssignedExpectedGroups bool
 }
 
 func (cluster *Cluster) renderToken(w http.ResponseWriter,
@@ -69,26 +88,28 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	}
 
 	token_data := templateData{
-		IDToken:           idToken,
-		RefreshToken:      refreshToken,
-		RedirectURL:       cluster.Redirect_URI,
-		Claims:            string(claims),
-		Username:          unix_username,
-		Issuer:            data["iss"].(string),
-		ClusterName:       cluster.Name,
-		ShortDescription:  cluster.Short_Description,
-		ClientSecret:      cluster.Client_Secret,
-		ClientID:          cluster.Client_ID,
-		K8sMasterURI:      cluster.K8s_Master_URI,
-		K8sCaURI:          cluster.K8s_Ca_URI,
-		K8sCaPem:          cluster.K8s_Ca_Pem,
-		IDPCaURI:          idpCaURI,
-		IDPCaPem:          idpCaPem,
-		LogoURI:           logoURI,
-		Web_Path_Prefix:   webPathPrefix,
-		StaticContextName: cluster.Static_Context_Name,
-		Namespace:         cluster.Namespace,
-		KubectlVersion:    kubectlVersion}
+		IDToken:                    idToken,
+		RefreshToken:               refreshToken,
+		RedirectURL:                cluster.Redirect_URI,
+		Claims:                     string(claims),
+		Username:                   unix_username,
+		Issuer:                     data["iss"].(string),
+		ClusterName:                cluster.Name,
+		ShortDescription:           cluster.Short_Description,
+		ClientSecret:               cluster.Client_Secret,
+		ClientID:                   cluster.Client_ID,
+		K8sMasterURI:               cluster.K8s_Master_URI,
+		K8sCaURI:                   cluster.K8s_Ca_URI,
+		K8sCaPem:                   cluster.K8s_Ca_Pem,
+		IDPCaURI:                   idpCaURI,
+		IDPCaPem:                   idpCaPem,
+		LogoURI:                    logoURI,
+		Web_Path_Prefix:            webPathPrefix,
+		StaticContextName:          cluster.Static_Context_Name,
+		Namespace:                  cluster.Namespace,
+		KubectlVersion:             kubectlVersion,
+		ShowAssignedExpectedGroups: cluster.Show_Assigned_Expected_Groups,
+	}
 
 	err = templates.ExecuteTemplate(w, "kubeconfig.html", token_data)
 
@@ -102,10 +123,13 @@ func (cluster *Cluster) renderHTMLError(w http.ResponseWriter, errorMsg string, 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(code)
-	templates.ExecuteTemplate(w, "error.html", map[string]string{
+	err := templates.ExecuteTemplate(w, "error.html", map[string]string{
 		"Logo_Uri":          cluster.Config.Logo_Uri,
 		"Web_Path_Prefix":   cluster.Config.Web_Path_Prefix,
 		"Code":              fmt.Sprintf("%d", code),
 		"Error_Description": errorMsg,
 	})
+	if err != nil {
+		log.Println(err)
+	}
 }
