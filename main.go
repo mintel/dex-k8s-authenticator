@@ -47,7 +47,7 @@ func (d debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	respDump, err := httputil.DumpResponse(resp, true)
 	if err != nil {
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		return nil, err
 	}
 	log.Printf("%s", respDump)
@@ -56,19 +56,20 @@ func (d debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 // Define each cluster
 type Cluster struct {
-	Name                string
-	Namespace           string
-	Short_Description   string
-	Description         string
-	Issuer              string
-	Client_Secret       string
-	Client_ID           string
-	K8s_Master_URI      string
-	K8s_Ca_URI          string
-	K8s_Ca_Pem          string
-	K8s_Ca_Pem_File     string
-	Static_Context_Name bool
-	Scopes              []string
+	Name                          string
+	Namespace                     string
+	Short_Description             string
+	Description                   string
+	Issuer                        string
+	Client_Secret                 string
+	Client_ID                     string
+	K8s_Master_URI                string
+	K8s_Ca_URI                    string
+	K8s_Ca_Pem                    string
+	K8s_Ca_Pem_File               string
+	Static_Context_Name           bool
+	Show_Assigned_Expected_Groups bool
+	Scopes                        []string
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
@@ -167,7 +168,7 @@ func start_app(config Config) {
 	}
 
 	// Generate handlers for each cluster
-	for i, _ := range config.Clusters {
+	for i := range config.Clusters {
 		cluster := config.Clusters[i]
 		if debug {
 			if cluster.Client == nil {
@@ -336,11 +337,11 @@ var RootCmd = &cobra.Command{
 		}
 
 		original := reflect.ValueOf(config)
-		copy := reflect.New(original.Type()).Elem()
-		substituteEnvVarsRecursive(copy, original)
+		cpy := reflect.New(original.Type()).Elem()
+		substituteEnvVarsRecursive(cpy, original)
 
 		// Start the app
-		start_app(copy.Interface().(Config))
+		start_app(cpy.Interface().(Config))
 
 		// Fallback if no args specified
 		cmd.HelpFunc()(cmd, args)
@@ -363,10 +364,10 @@ func initConfig() {
 		base := filepath.Base(abs)
 
 		// get the path
-		path := filepath.Dir(abs)
+		pth := filepath.Dir(abs)
 
 		viper.SetConfigName(strings.Split(base, ".")[0])
-		viper.AddConfigPath(path)
+		viper.AddConfigPath(pth)
 		viper.SetDefault("web_path_prefix", "/")
 
 		config, err := ioutil.ReadFile(config_file)
@@ -375,8 +376,10 @@ func initConfig() {
 		}
 
 		origConfigStr := bytes.NewBuffer(config).String()
-		viper.ReadConfig(bytes.NewBufferString(origConfigStr))
-
+		err = viper.ReadConfig(bytes.NewBufferString(origConfigStr))
+		if err != nil {
+			log.Println(err)
+		}
 		log.Printf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
@@ -385,7 +388,10 @@ func initConfig() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	viper.BindPFlags(RootCmd.Flags())
+	err := viper.BindPFlags(RootCmd.Flags())
+	if err != nil {
+		log.Println(err)
+	}
 	RootCmd.Flags().StringVar(&config_file, "config", "", "./config.yml")
 	RootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Enable debug logging")
 }
