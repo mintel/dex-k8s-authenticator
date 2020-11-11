@@ -27,6 +27,9 @@ data:
     tls_cert: "{{ .tlsCert }}"
     tls_key: "{{ .tlsKey }}"
     {{- end }}
+    {{- if .trusted_root_ca }}
+    trusted_root_ca: {{ toYaml .trusted_root_ca | indent 4 }}
+    {{- end }}
     clusters:
 {{ toYaml .clusters | indent 4 }}
     {{- end }}
