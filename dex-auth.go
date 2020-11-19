@@ -40,6 +40,10 @@ func (config *Config) handleIndex(w http.ResponseWriter, r *http.Request) {
 func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling login-uri for: %s", cluster.Name)
 	authCodeURL := cluster.oauth2Config().AuthCodeURL(exampleAppState, oauth2.AccessTypeOffline)
+	if cluster.Connector_ID != "" {
+		log.Printf("Using dex connector with id %#q", cluster.Connector_ID)
+		authCodeURL = fmt.Sprintf("%s&connector_id=%s", authCodeURL, cluster.Connector_ID)
+	}
 	log.Printf("Redirecting post-loginto: %s", authCodeURL)
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
