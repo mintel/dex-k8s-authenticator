@@ -29,18 +29,12 @@ jobs:
           helmv3: 3.0.0
           command: |
             mkdir -p /tmp/charts
-            helmv3 template --output-dir /github/workspace/charts/dex charts/dex
-            helmv3 template --output-dir /github/workspace/charts/dex-k8s-authenticator charts/dex-k8s-authenticator
+            helmv3 template charts/dex --output-dir /github/workspace/charts/dex
+            helmv3 template charts/dex-k8s-authenticator --output-dir /github/workspace/charts/dex-k8s-authenticator
             ls -l /tmp/charts
-      - name: kubeval-dex
+      - name: kubeval
         uses: stefanprodan/kube-tools@v1.5.0
         with:
           helmv3: 3.0.0
           command: |
-            kubeval -d /github/workspace/charts/dex --strict --ignore-missing-schemas
-      - name: kubeval-dex-k8s-auth
-        uses: stefanprodan/kube-tools@v1.5.0
-        with:
-          helmv3: 3.0.0
-          command: |
-            kubeval -d /github/workspace/charts/dex-k8s-authenticator --strict --ignore-missing-schemas
+            kubeval -d /github/workspace/charts --strict --ignore-missing-schemas
