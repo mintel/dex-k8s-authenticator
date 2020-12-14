@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Bump dex version to `v2.17.0` (security release)
+- Bump dex version to `v2.27.0` (security release)
 - Switch to `dexidp/dex` container image registry
 
 ## [v1.3.0]
