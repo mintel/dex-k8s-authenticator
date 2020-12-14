@@ -20,11 +20,11 @@ jobs:
       - name: kubectl-get-nodes
         run: kubectl get nodes
       - name: build-ci-image
-        command: |
+        run: |
           eval $(minikube docker-env)
           docker build -t mintel/dex-k8s-authenticator:${GITHUB_SHA} .
       - name: generate chart overrides
-        command: |
+        run: |
           set -x
           export CLUSTER_IP=$(minikube ip)
           export CI_TAG=$GITHUB_SHA
