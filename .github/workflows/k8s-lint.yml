@@ -1,3 +1,10 @@
+name: k8s-lint
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
 jobs:
   k8s-lint:
     name: helmlint-dex
