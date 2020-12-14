@@ -37,5 +37,4 @@ jobs:
         with:
           helmv3: 3.0.0
           command: |
-            ls -l /tmp/charts
             kubeval -d /github/workspace/charts --strict --ignore-missing-schemas
