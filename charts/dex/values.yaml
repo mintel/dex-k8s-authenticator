@@ -7,8 +7,8 @@ global:
 replicaCount: 1
 
 image:
-  repository: quay.io/dexidp/dex
-  tag: v2.20.0
+  repository: dexidp/dex
+  tag: v2.27.0
   pullPolicy: IfNotPresent
 
 service:
