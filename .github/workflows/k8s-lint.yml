@@ -31,9 +31,11 @@ jobs:
             mkdir -p /tmp/charts
             helmv3 template --output-dir /tmp/charts charts/dex
             helmv3 template --output-dir /tmp/charts charts/dex-k8s-authenticator
+            ls -l /tmp/charts
       - name: kubeval
         uses: stefanprodan/kube-tools@v1.5.0
         with:
           helmv3: 3.0.0
           command: |
+            ls -l /tmp/charts
             kubeval -d /tmp/charts --strict --ignore-missing-schemas
