@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v1.3.0]
+
+### Added
+- Pass optional `connector_id` to cluster context (#146)
+- Added `trusted_root_ca` to dex-k8s-authenticator helm chart (#143)
+- Added `k8s_ca_pem_file` option (#136)
+- Allow OIDC scopes per cluster (#129)
+- Added namespace field to cluster-config (#124)
+- Added HTTP Proxy support (#109)
+- Added CircleCI tests
+
+### Fixed
+- Fix indentation for `nodeSelector` and `tolerations` in dex-k8s-authenticator helm chart (#137)
+- Propgate SIGTERM for graceful shutdown (#110)
+
 ## [v1.2.0]
 
 ### Added
