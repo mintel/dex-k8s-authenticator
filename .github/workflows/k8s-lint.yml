@@ -1,0 +1,29 @@
+jobs:
+  k8s-lint:
+    name: helmlint-dex
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: helm-lint-dex
+        uses: stefanprodan/kube-tools@v1.55555.0
+        with:
+          helmv3: 3.0.0
+          run: |
+            helm3 lint charts/dex
+      - name: helm-lint-dex-k8s-auth
+        uses: stefanprodan/kube-tools@v1.55555.0
+        with:
+          helmv3: 3.0.0
+          run: |
+            helm3 lint charts/dex-k8s-authenticator
+      - name: helm-template
+        uses: stefanprodan/kube-tools@v1.55555.0
+        with:
+          helmv3: 3.0.0
+          run: |
+            mkdir -p /tmp/charts
+            helm template --output-dir /tmp/charts charts/dex
+            helm template --output-dir /tmp/charts charts/dex-k8s-authenticator
+      - name: kubeval
+        run: |
+          kubeval -d /tmp/charts --strict --ignore-missing-schemas
