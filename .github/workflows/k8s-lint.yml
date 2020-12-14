@@ -29,8 +29,8 @@ jobs:
           helmv3: 3.0.0
           command: |
             mkdir -p /tmp/charts
-            helmv3 template --output-dir /github/workspacecharts charts/dex
-            helmv3 template --output-dir /github/workspace/charts charts/dex-k8s-authenticator
+            helmv3 template --output-dir /github/workspace/charts/dex charts/dex
+            helmv3 template --output-dir /github/workspace/charts/dex-k8s-authenticator charts/dex-k8s-authenticator
             ls -l /tmp/charts
       - name: kubeval-dex
         uses: stefanprodan/kube-tools@v1.5.0
