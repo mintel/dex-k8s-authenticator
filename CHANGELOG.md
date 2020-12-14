@@ -1,9 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v1.4.0]
+
+### Changed
+
+- Bump dex version to `v2.27.0` (security release)
+- Switch to `dexidp/dex` container image registry
+
 ## [v1.3.0]
 
 ### Added
+
 - Pass optional `connector_id` to cluster context (#146)
 - Added `trusted_root_ca` to dex-k8s-authenticator helm chart (#143)
 - Added `k8s_ca_pem_file` option (#136)
@@ -13,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Added CircleCI tests
 
 ### Fixed
+
 - Fix indentation for `nodeSelector` and `tolerations` in dex-k8s-authenticator helm chart (#137)
 - Propgate SIGTERM for graceful shutdown (#110)
 
@@ -28,7 +37,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Bump to dex version to `v2.17.0`
+- Bump dex version to `v2.17.0`
 - Bump to `golang:1.12-alpine3.10`
 - Switch to Go Modules
 - Minor update (skip cluster selection if only 1 cluster defined)
