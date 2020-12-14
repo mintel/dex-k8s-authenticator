@@ -33,5 +33,5 @@ jobs:
             helm template --output-dir /tmp/charts charts/dex-k8s-authenticator
       - name: kubeval
         uses: stefanprodan/kube-tools@v1.5.0
-        run: |
-          kubeval -d /tmp/charts --strict --ignore-missing-schemas
+          run: |
+            kubeval -d /tmp/charts --strict --ignore-missing-schemas
