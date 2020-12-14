@@ -21,19 +21,19 @@ jobs:
         uses: stefanprodan/kube-tools@v1.5.0
         with:
           helmv3: 3.0.0
-          run: |
+          command: |
             helmv3 lint charts/dex-k8s-authenticator
       - name: helm-template
         uses: stefanprodan/kube-tools@v1.5.0
         with:
           helmv3: 3.0.0
-          run: |
+          command: |
             mkdir -p /tmp/charts
-            helm template --output-dir /tmp/charts charts/dex
-            helm template --output-dir /tmp/charts charts/dex-k8s-authenticator
+            helmv3 template --output-dir /tmp/charts charts/dex
+            helmv3 template --output-dir /tmp/charts charts/dex-k8s-authenticator
       - name: kubeval
         uses: stefanprodan/kube-tools@v1.5.0
         with:
           helmv3: 3.0.0
-          run: |
+          command: |
             kubeval -d /tmp/charts --strict --ignore-missing-schemas
