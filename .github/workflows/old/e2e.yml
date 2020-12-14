@@ -1,0 +1,48 @@
+name: e2e
+
+on:
+#  push:
+#    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  kind:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node_image: 
+          - "kindest/node:v1.14.10@sha256:6cd43ff41ae9f02bb46c8f455d5323819aec858b99534a290517ebc181b443c6"
+          - "kindest/node:v1.15.11@sha256:6cc31f3533deb138792db2c7d1ffc36f7456a06f1db5556ad3b6927641016f50"
+          - "kindest/node:v1.16.9@sha256:7175872357bc85847ec4b1aba46ed1d12fa054c83ac7a8a11f5c268957fd5765"
+          #- "kindest/node:v1.17.5@sha256:ab3f9e6ec5ad8840eeb1f76c89bb7948c77bbf76bcebe1a8b59790b8ae9a283a"
+          #- "kindest/node:v1.18.2@sha256:7b27a6d0f2517ff88ba444025beae41491b016bc6af573ba467b70c5e8e0d85f"
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Kind Cluster
+      uses: helm/kind-action@v1.0.0-rc.1
+      with:
+        version: v0.8.1
+        node_image: ${{ matrix.node_image }}
+        cluster_name: kind
+  
+    - name: Build Container locally
+      run: make docker VERSION=test
+  
+    - name: Wait for k8s
+      run: |
+        kubectl rollout status -n kube-system daemonset kindnet --timeout=180s
+        kubectl rollout status -n kube-system daemonset kube-proxy --timeout=180s
+        kubectl rollout status -n kube-system deployment coredns --timeout=180s
+
+    - name: Run Acceptance Test
+      run: |
+        kind load docker-image mintel/dex-k8s-ingress-watcher:test
+        hack/test-kind-dex.sh

@@ -1,0 +1,28 @@
+name: common
+
+on:
+#  push:
+#    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  fmt:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Gofmter
+      uses: Jerome1337/gofmt-action@v1.0.2
+      with:
+        gofmt-path: ./
+
+    - name: Hadolint Action
+      uses: brpaz/hadolint-action@v1.1.0
+      with:
+        dockerfile: Dockerfile
