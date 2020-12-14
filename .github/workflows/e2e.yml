@@ -1,0 +1,32 @@
+name: e2e
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+jobs:
+  setup-minikube:
+    name: launch-minikube
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: start-minikube
+        uses: hiberbee/github-action-minikube@latest
+        with:
+          profile: github
+          addons: ingress
+      - name: kubectl-get-nodes
+        run: kubectl get nodes
+      - name: build-ci-image
+        command: |
+          eval $(minikube docker-env)
+          docker build -t mintel/dex-k8s-authenticator:${GITHUB_SHA} .
+      - name: generate chart overrides
+        command: |
+          set -x
+          export CLUSTER_IP=$(minikube ip)
+          export CI_TAG=$GITHUB_SHA
+          envsubst < ./tests/e2e/helm/dex-overrides.yaml > /tmp/dex-overrides.yaml
+          envsubst < ./tests/e2e/helm/dex-k8s-auth-overrides.yaml > /tmp/dex-k8s-auth-overrides.yaml
