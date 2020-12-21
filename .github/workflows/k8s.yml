@@ -70,5 +70,7 @@ jobs:
         run: |
             kubectl get pods 
             export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+            set -x
             curl -Lsf "http://${NODE_IP}:30000/login/my-cluster" > /tmp/output.html
+            cat /tmp/output.yaml
             grep "Log in to Your Account" /tmp/output.html
