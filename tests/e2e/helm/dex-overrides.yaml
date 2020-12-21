@@ -1,17 +1,18 @@
 # Default values for dex
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 5556
+  nodePort: 30001
 
 ingress:
   enabled: true
   path: /
   hosts:
-    - dex.${CLUSTER_IP}.nip.io
+  - dex.${NODE_IP}.nip.io
 
 config: |-
-  issuer: http://dex.${CLUSTER_IP}.nip.io
+  issuer: http://${NODE_IP}:30001
 
   storage:
     type: kubernetes
@@ -44,7 +45,7 @@ config: |-
     name: "my-cluster"
     secret: "pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok"
     redirectURIs:
-    - http://dex-k8s-authenticator.${CLUSTER_IP}.nip.io/callback/my-cluster
+      - http://${NODE_IP}:30000/callback/my-cluster
   enablePasswordDB: True
   staticPasswords:
   - email: "admin@example.com"
