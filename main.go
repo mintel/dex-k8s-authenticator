@@ -97,7 +97,7 @@ type Config struct {
 }
 
 func substituteEnvVars(text string) string {
-	re := regexp.MustCompile("\\${([a-zA-Z0-9\\-_]+)}")
+	re := regexp.MustCompile(`\${([a-zA-Z0-9\-_]+)}`)
 	matches := re.FindAllStringSubmatch(text, -1)
 	for _, val := range matches {
 		envVar := os.Getenv(val[1])
@@ -168,7 +168,7 @@ func start_app(config Config) {
 	}
 
 	// Generate handlers for each cluster
-	for i, _ := range config.Clusters {
+	for i := range config.Clusters {
 		cluster := config.Clusters[i]
 		if debug {
 			if cluster.Client == nil {
@@ -223,9 +223,7 @@ func start_app(config Config) {
 			cluster.Scopes = []string{"openid", "profile", "email", "offline_access", "groups"}
 		}
 
-		if cluster.K8s_Ca_Pem != "" {
-			cluster.K8s_Ca_Pem = cluster.K8s_Ca_Pem
-		} else if cluster.K8s_Ca_Pem_File != "" {
+		if cluster.K8s_Ca_Pem_File != "" {
 			content, err := ioutil.ReadFile(cluster.K8s_Ca_Pem_File)
 			if err != nil {
 				log.Fatalf("Failed to load CA from file %s, %s", cluster.K8s_Ca_Pem_File, err)
@@ -238,8 +236,7 @@ func start_app(config Config) {
 		base_redirect_uri, err := url.Parse(cluster.Redirect_URI)
 
 		if err != nil {
-			log.Printf("Parsing redirect_uri address: %v", err)
-			os.Exit(1)
+			log.Fatalf("Parsing redirect_uri address: %v", err)
 		}
 
 		// Each cluster gets a different login and callback URL
@@ -376,7 +373,10 @@ func initConfig() {
 		}
 
 		origConfigStr := bytes.NewBuffer(config).String()
-		viper.ReadConfig(bytes.NewBufferString(origConfigStr))
+
+		if err := viper.ReadConfig(bytes.NewBufferString(origConfigStr)); err != nil {
+			log.Fatalf("viper.ReadConfig failed to read config, %s", err.Error())
+		}
 
 		log.Printf("Using config file: %s", viper.ConfigFileUsed())
 	}
@@ -386,7 +386,10 @@ func initConfig() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	viper.BindPFlags(RootCmd.Flags())
+	if err := viper.BindPFlags(RootCmd.Flags()); err != nil {
+		log.Fatal(err)
+	}
+
 	RootCmd.Flags().StringVar(&config_file, "config", "", "./config.yml")
 	RootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Enable debug logging")
 }

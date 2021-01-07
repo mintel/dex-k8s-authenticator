@@ -121,10 +121,19 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var claims json.RawMessage
-	idToken.Claims(&claims)
+	if err = idToken.Claims(&claims); err != nil {
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+		log.Printf("handleCallback: failed to unmarshal json payload of ID token into claims: %v", err)
+		return
+	}
 
 	buff := new(bytes.Buffer)
-	json.Indent(buff, []byte(claims), "", "  ")
+	if err = json.Indent(buff, []byte(claims), "", "  "); err != nil {
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+		log.Printf("handleCallback: failed to indent json:  %v", err)
+		return
+
+	}
 
 	if cluster.Config.IDP_Ca_Pem != "" {
 		IdpCaPem = cluster.Config.IDP_Ca_Pem

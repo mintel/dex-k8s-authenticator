@@ -3,6 +3,11 @@ image:
   tag: ${CI_TAG}
   pullPolicy: Never
 
+service:
+  type: NodePort 
+  port: 5555
+  nodePort: 30000
+
 dexK8sAuthenticator:
   port: 5555
   clusters:
@@ -10,14 +15,17 @@ dexK8sAuthenticator:
     short_description: "My Cluster"
     description: "Example Cluster Long Description..."
     client_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
-    issuer: http://dex.${CLUSTER_IP}.nip.io
+    issuer: http://${NODE_IP}:30001
     k8s_master_uri: https://my-cluster.example.com
     client_id: my-cluster
-    redirect_uri: http://dex-k8s-authenticator.${CLUSTER_IP}.nip.io/callback/my-cluster
+    redirect_uri: http://${NODE_IP}:30000/callback/my-cluster
     k8s_ca_uri: https://url-to-your-ca.crt
 
 ingress:
   enabled: true
   path: /
   hosts:
-    - dex-k8s-authenticator.${CLUSTER_IP}.nip.io
+  - dex-k8s-authenticator.${NODE_IP}.nip.io
+
+
+
