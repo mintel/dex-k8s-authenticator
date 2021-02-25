@@ -1,0 +1,72 @@
+name: k8s-lint
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+jobs:
+  k8s-lint:
+    name: helm-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: helm-lint-dex
+        uses: stefanprodan/kube-tools@v1.5.0
+        with:
+          helmv3: 3.0.0
+          run: |
+            helmv3 lint charts/dex
+      - name: helm-lint-dex-k8s-auth
+        uses: stefanprodan/kube-tools@v1.5.0
+        with:
+          helmv3: 3.0.0
+          command: |
+            helmv3 lint charts/dex-k8s-authenticator
+      - name: helm-template
+        uses: stefanprodan/kube-tools@v1.5.0
+        with:
+          helmv3: 3.0.0
+          command: |
+            helmv3 template charts/dex --output-dir /github/workspace/rendered-charts/dex
+            helmv3 template charts/dex-k8s-authenticator --output-dir /github/workspace/rendered-charts/dex-k8s-authenticator
+      - name: kubeval
+        uses: stefanprodan/kube-tools@v1.5.0
+        with:
+          helmv3: 3.0.0
+          command: |
+            kubeval -d /github/workspace/rendered-charts --strict --ignore-missing-schemas
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: setup-kind
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          name: kind
+      - name: build-ci-image
+        run: |
+          docker build -t mintel/dex-k8s-authenticator:${GITHUB_SHA} .
+          kind load docker-image mintel/dex-k8s-authenticator:${GITHUB_SHA}
+      - name: update-helm-values
+        run: |
+          set -x
+          export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+          export CI_TAG=$GITHUB_SHA
+          envsubst < ./tests/e2e/helm/dex-overrides.yaml > /tmp/dex-overrides.yaml
+          envsubst < ./tests/e2e/helm/dex-k8s-auth-overrides.yaml > /tmp/dex-k8s-auth-overrides.yaml
+      - name: install-dex
+        run: |
+          helm install -f /tmp/dex-overrides.yaml dex ./charts/dex
+          kubectl describe deployment dex
+          kubectl rollout status deploy dex -w
+      - name: install-dex-auth
+        run: |
+          helm install -f /tmp/dex-k8s-auth-overrides.yaml dex-k8s-authenticator ./charts/dex-k8s-authenticator
+          kubectl describe deployment dex-k8s-authenticator
+          kubectl rollout status deploy dex-k8s-authenticator -w
+      - name: test
+        run: |
+            kubectl get pods 
+            export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+            curl -Lsf "http://${NODE_IP}:30000/login/my-cluster" | grep "Log in to Your Account"

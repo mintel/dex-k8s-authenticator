@@ -1,12 +1,10 @@
 apiVersion: v1
-appVersion: "v1.2.0"
+appVersion: "v1.4.0"
 description: "Authenticator for using Dex with Kubernetes"
 name: dex-k8s-authenticator
-version: 1.2.0
+version: 1.4.0
 sources:
 - https://github.com/mintel/dex-k8s-authenticator
 maintainers:
-- name: Aaron Roydhouse
-  email: aaron@roydhouse.com
 - name: Nick Badger
   email: nbadger@mintel.com

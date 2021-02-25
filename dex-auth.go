@@ -40,6 +40,10 @@ func (config *Config) handleIndex(w http.ResponseWriter, r *http.Request) {
 func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling login-uri for: %s", cluster.Name)
 	authCodeURL := cluster.oauth2Config().AuthCodeURL(exampleAppState, oauth2.AccessTypeOffline)
+	if cluster.Connector_ID != "" {
+		log.Printf("Using dex connector with id %#q", cluster.Connector_ID)
+		authCodeURL = fmt.Sprintf("%s&connector_id=%s", authCodeURL, cluster.Connector_ID)
+	}
 	log.Printf("Redirecting post-loginto: %s", authCodeURL)
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
@@ -117,10 +121,19 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var claims json.RawMessage
-	idToken.Claims(&claims)
+	if err = idToken.Claims(&claims); err != nil {
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+		log.Printf("handleCallback: failed to unmarshal json payload of ID token into claims: %v", err)
+		return
+	}
 
 	buff := new(bytes.Buffer)
-	json.Indent(buff, []byte(claims), "", "  ")
+	if err = json.Indent(buff, []byte(claims), "", "  "); err != nil {
+		cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
+		log.Printf("handleCallback: failed to indent json:  %v", err)
+		return
+
+	}
 
 	if cluster.Config.IDP_Ca_Pem != "" {
 		IdpCaPem = cluster.Config.IDP_Ca_Pem

@@ -12,6 +12,7 @@ An example configuration is available [here](../examples/config.yaml)
 | description            | yes      | cluster | Extended description of cluster                                                       |
 | client_secret          | yes      | cluster | OAuth2 client-secret (shared between dex-k8s-auth and dex)                            |
 | client_id              | yes      | cluster | OAuth2 client-id public identifier (shared between dex-k8s-auth and dex)              |
+| connector_id           | no       | cluster | Dex connector ID to use by default omitting other available connectors                |
 | issuer                 | yes      | cluster | Dex issuer url                                                                        |
 | redirect_uri           | yes      | cluster | Redirect uri called by dex (defines a callback on dex-k8s-auth)                       |
 | k8s_master_uri         | no       | cluster | Kubernetes api-server endpoint (used in kubeconfig)                                   |
