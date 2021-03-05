@@ -1,6 +1,7 @@
 # Dex K8s Authenticator
 
-[![CircleCI](https://circleci.com/gh/mintel/dex-k8s-authenticator.svg?style=svg)](https://circleci.com/gh/mintel/dex-k8s-authenticator)
+[![golang-lint](https://github.com/mintel/dex-k8s-authenticator/workflows/golangci-lint/badge.svg)](https://github.com/mintel/dex-k8s-authenticator/actions/workflows/golangci-lint.yml)
+[![k8s-lint](https://github.com/mintel/dex-k8s-authenticator/workflows/k8s-lint/badge.svg)](https://github.com/mintel/dex-k8s-authenticator/actions/workflows/k8s.yml)
 
 A helper web-app which talks to one or more [Dex Identity services](https://github.com/dexidp/dex) to generate
 `kubectl` commands for creating and modifying a `kubeconfig`.
