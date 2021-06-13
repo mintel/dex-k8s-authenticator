@@ -225,10 +225,6 @@ func start_app(config Config) {
 			cluster.Scopes = []string{"openid", "profile", "email", "offline_access", "groups"}
 		}
 
-		if cluster.K8s_Ca_Pem != "" && cluster.K8s_Ca_Pem_Base64_Encoded != "" {
-			log.Fatal("Cannot specify both k8s_ca_pem and k8s_ca_pem_base64_encoded")
-		}
-
 		if cluster.K8s_Ca_Pem_File != "" {
 			content, err := ioutil.ReadFile(cluster.K8s_Ca_Pem_File)
 			if err != nil {
@@ -237,7 +233,7 @@ func start_app(config Config) {
 			cluster.K8s_Ca_Pem = cast.ToString(content)
 		}
 
-		if cluster.K8s_Ca_Pem_Base64_Encoded != "" {
+		if cluster.K8s_Ca_Pem == "" && cluster.K8s_Ca_Pem_Base64_Encoded != "" {
 			p, err := base64.StdEncoding.DecodeString(cluster.K8s_Ca_Pem_Base64_Encoded)
 			if err != nil {
 				log.Fatalf("Failed to base64 decode ca pem: %s", err.Error())
