@@ -41,4 +41,3 @@ RUN chmod a+x /entrypoint.sh
 ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
 
 CMD ["--help"]
-
