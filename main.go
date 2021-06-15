@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -56,20 +57,21 @@ func (d debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 // Define each cluster
 type Cluster struct {
-	Name                string
-	Namespace           string
-	Short_Description   string
-	Description         string
-	Issuer              string
-	Client_Secret       string
-	Client_ID           string
-	Connector_ID        string
-	K8s_Master_URI      string
-	K8s_Ca_URI          string
-	K8s_Ca_Pem          string
-	K8s_Ca_Pem_File     string
-	Static_Context_Name bool
-	Scopes              []string
+	Name                      string
+	Namespace                 string
+	Short_Description         string
+	Description               string
+	Issuer                    string
+	Client_Secret             string
+	Client_ID                 string
+	Connector_ID              string
+	K8s_Master_URI            string
+	K8s_Ca_URI                string
+	K8s_Ca_Pem                string
+	K8s_Ca_Pem_File           string
+	K8s_Ca_Pem_Base64_Encoded string
+	Static_Context_Name       bool
+	Scopes                    []string
 
 	Verifier       *oidc.IDTokenVerifier
 	Provider       *oidc.Provider
@@ -229,6 +231,15 @@ func start_app(config Config) {
 				log.Fatalf("Failed to load CA from file %s, %s", cluster.K8s_Ca_Pem_File, err)
 			}
 			cluster.K8s_Ca_Pem = cast.ToString(content)
+		}
+
+		if cluster.K8s_Ca_Pem == "" && cluster.K8s_Ca_Pem_Base64_Encoded != "" {
+			p, err := base64.StdEncoding.DecodeString(cluster.K8s_Ca_Pem_Base64_Encoded)
+			if err != nil {
+				log.Fatalf("Failed to base64 decode ca pem: %s", err.Error())
+			}
+
+			cluster.K8s_Ca_Pem = string(p)
 		}
 
 		cluster.Config = config
