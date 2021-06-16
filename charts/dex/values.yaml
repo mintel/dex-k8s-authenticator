@@ -243,3 +243,6 @@ envSecrets:
   MICROSOFT_CLIENT_SECRET: "override-me"
   # LDAP
   LDAP_BINDPW: "override-me"
+
+# Name of the envSecret, only change this if you manage secret outside of this chart
+#envSecretName: custom-secret

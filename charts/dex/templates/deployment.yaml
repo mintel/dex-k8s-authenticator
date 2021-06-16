@@ -55,11 +55,12 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/usr/local/bin/dex", "serve", "/etc/dex/config.yaml"]
         env:
+        {{- $envSecretName  := .Values.envSecretName -}}
         {{- range $key, $value := .Values.envSecrets }}
         - name: {{ $key }}
           valueFrom:
             secretKeyRef:
-              name: {{ template "dex.fullname" $ }}
+              name: {{ if $envSecretName }}{{ $envSecretName }}{{ else }}{{ template "dex.fullname" $ }}{{- end }}
               key: {{ template "dex.envkey" $key }}
         {{- end }}
         ports:
