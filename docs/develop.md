@@ -17,7 +17,7 @@ Creates ./bin/dex-k8s-authenticator
 You must have a `dex` instance running before starting `dex-k8s-authenticator`.
 
 Follow the example here:
-https://github.com/coreos/dex/blob/master/Documentation/getting-started.md
+https://github.com/dexidp/website/blob/main/content/docs/getting-started.md
 
 Start it with using the provided `./examples/dex-server-config-dev.yaml`
 

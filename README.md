@@ -40,5 +40,4 @@ Feel free to raise feature-requests and bugs. PR's are also very welcome.
 - https://github.com/negz/kubehook
 - https://github.com/fydrah/loginapp
 
-This application is based on the original [example-app](https://github.com/coreos/dex/tree/master/cmd/example-app
-) available in the CoreOS Dex repo.
+This application is based on the [example-app](https://github.com/dexidp/dex/tree/master/examples/example-app) available in the Dex repo.
