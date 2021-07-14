@@ -71,7 +71,8 @@ EOF</code></pre>
   {{- if or .K8sCaPem .K8sCaURI }}
     --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt \
   {{- end }}
-    --server={{ .K8sMasterURI }}</code></pre>
+    --server={{ .K8sMasterURI }}</code></pre> \
+    --insecure-skip-tls-verify=true
   </div>
 
   <div class="command">
