@@ -51,6 +51,7 @@ ingress:
   #  - secretName: dex.example.com
   #    hosts:
   #      - dex.example.com
+  ingressClassName:  # "nginx"
 
 rbac:
   # Specifies whether RBAC resources should be created
