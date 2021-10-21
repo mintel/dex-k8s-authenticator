@@ -63,8 +63,13 @@ func (cluster *Cluster) renderToken(w http.ResponseWriter,
 	}
 
 	unix_username := "user"
-	if data["email"] != nil {
-		email := data["email"].(string)
+	username_field := "email"
+	if cluster.Username_Field != "" {
+		username_field = cluster.Username_Field
+	}
+
+	if data[username_field] != nil {
+		email := data[username_field].(string)
 		unix_username = strings.Split(email, "@")[0]
 	}
 

@@ -21,6 +21,7 @@ An example configuration is available [here](../examples/config.yaml)
 | k8s_ca_pem_base64_encoded | no       | cluster | The Base64 encoded CA for your k8s server (used in generating instructions)           |
 | k8s_ca_pem_file           | no       | cluster | The CA file for your k8s server (used in generating instructions)                     |
 | scopes                    | no       | cluster | A list OpenID scopes to request                                                       |
+| username_field            | no       | cluster | A field that points to username                                                       |
 | tls_cert                  | no       | root    | Path to TLS cert if SSL enabled                                                       |
 | tls_key                   | no       | root    | Path to TLS key if SSL enabled                                                        |
 | idp_ca_uri                | no       | root    | A url pointing to the CA for generating 'idp-certificate-authority' in the kubeconfig |
