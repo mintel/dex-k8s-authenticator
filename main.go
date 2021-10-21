@@ -79,7 +79,7 @@ type Cluster struct {
 	Client         *http.Client
 	Redirect_URI   string
 	Config         Config
-	UserName_Field         String
+	Username_Field String
 }
 
 // Define our configuration
