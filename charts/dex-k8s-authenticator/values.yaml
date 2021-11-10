@@ -10,7 +10,7 @@ image:
   repository: mintel/dex-k8s-authenticator
   tag: 1.4.0
   pullPolicy: Always
- 
+
 imagePullSecrets: {}
 
 dexK8sAuthenticator:
@@ -89,6 +89,7 @@ caCerts:
   #  filename: ca2.crt
   #  value: DS1tFA1......X2F
 
+envFrom: []
 
 nodeSelector: {}
 
