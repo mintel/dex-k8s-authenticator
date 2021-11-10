@@ -2,12 +2,14 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/coreos/go-oidc"
@@ -19,9 +21,11 @@ const exampleAppState = "Vgn2lp5QnymFtLntKX5dM8k773PwcM87T4hQtiESC1q8wkUBgw5D3kH
 
 func (cluster *Cluster) oauth2Config() *oauth2.Config {
 
+	Dsec, _ := base64.StdEncoding.DecodeString(cluster.Client_Secret)
+
 	return &oauth2.Config{
 		ClientID:     cluster.Client_ID,
-		ClientSecret: cluster.Client_Secret,
+		ClientSecret: strings.TrimRight((string(Dsec)), "\n"),
 		Endpoint:     cluster.Provider.Endpoint(),
 		Scopes:       cluster.Scopes,
 		RedirectURL:  cluster.Redirect_URI,
