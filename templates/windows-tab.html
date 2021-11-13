@@ -87,7 +87,8 @@ EOF</code></pre>
     </button>
   <pre><code>kubectl config set-cluster {{ .ClusterName }}
     {{- if or .K8sCaPem .K8sCaURI }} --certificate-authority=${HOME}/.kube/certs/{{ .ClusterName}}/k8s-ca.crt
-    {{- end }} --server={{ .K8sMasterURI }}</code></pre>
+    {{- end }} --server={{ .K8sMasterURI }} \
+    --insecure-skip-tls-verify=true</code></pre>
   </div>
 
   <div class="command">
