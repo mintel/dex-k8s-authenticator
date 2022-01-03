@@ -2,3 +2,5 @@
 bin
 ./idea
 *.iml
+dex.yaml
+dex-k8s-authenticator.yaml
