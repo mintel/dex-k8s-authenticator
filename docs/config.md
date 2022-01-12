@@ -73,9 +73,8 @@ clusters:
 # A path-prefix from which to serve requests and assets
 web_path_prefix: /dex-auth
 ```
-IMPORTANT:
- - Don't forget to update the Dex `staticClients.redirectURIs` value to include the prefix as well.
- - Please make sure that you Encode the `client_secret` with base64.
+-
+Don't forget to update the Dex `staticClients.redirectURIs` value to include the prefix as well.
 
 ### Helm
 
