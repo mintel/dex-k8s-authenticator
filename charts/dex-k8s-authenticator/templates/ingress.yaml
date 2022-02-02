@@ -2,7 +2,7 @@
 {{- $fullName := include "dex-k8s-authenticator.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $ingressPath := .Values.ingress.path -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
@@ -33,8 +33,11 @@ spec:
     http:
       paths:
       - path: {{ $ingressPath }}
+        pathType: Prefix
         backend:
-          serviceName: {{ $fullName }}
-          servicePort: {{ $servicePort }}
+          service:
+            name: {{ $fullName }}
+            port:
+              number: {{ $servicePort }}
   {{- end }}
 {{- end }}
