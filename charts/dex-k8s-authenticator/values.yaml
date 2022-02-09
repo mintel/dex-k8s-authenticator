@@ -13,6 +13,8 @@ image:
 
 imagePullSecrets: {}
 
+priorityClassName: ""
+
 dexK8sAuthenticator:
   port: 5555
   debug: false
