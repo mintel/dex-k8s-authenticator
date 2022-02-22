@@ -2,7 +2,13 @@
 {{- $fullName := include "dex-k8s-authenticator.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $ingressPath := .Values.ingress.path -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion }}
+apiVersion: networking.k8s.io/v1beta1 
+{{- else }}
 apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
   name: {{ $fullName }}
@@ -17,6 +23,9 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+{{- if .Values.ingress.className and (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ingress.className }}
+{{- end }}
 {{- if .Values.ingress.tls }}
   tls:
   {{- range .Values.ingress.tls }}
@@ -33,8 +42,18 @@ spec:
     http:
       paths:
       - path: {{ $ingressPath }}
+        {{- if semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion }}
+        pathType: ImplementationSpecific
+        {{- end }}
         backend:
+          {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
+          service:
+            name: {{ $fullName }}
+            port:
+              number: {{ $servicePort }}
+          {{- else }}
           serviceName: {{ $fullName }}
           servicePort: {{ $servicePort }}
+          {{- end }}
   {{- end }}
 {{- end }}
