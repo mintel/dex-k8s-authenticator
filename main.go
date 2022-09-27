@@ -186,7 +186,11 @@ func start_app(config Config) {
 
 	// Generate handlers for each cluster
 	for i := range config.Clusters {
-		cluster := config.Clusters[i]
+		cluster := clusterState{
+			StateStore: State{make(MapStateStore)},
+			Cluster:    config.Clusters[i],
+		}
+
 		if debug {
 			if cluster.Client == nil {
 				cluster.Client = &http.Client{

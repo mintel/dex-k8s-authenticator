@@ -15,9 +15,12 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const exampleAppState = "Vgn2lp5QnymFtLntKX5dM8k773PwcM87T4hQtiESC1q8wkUBgw5D3kH0r5qJ"
+type clusterState struct {
+	Cluster
+	StateStore State
+}
 
-func (cluster *Cluster) oauth2Config() *oauth2.Config {
+func (cluster clusterState) oauth2Config() *oauth2.Config {
 
 	return &oauth2.Config{
 		ClientID:     cluster.Client_ID,
@@ -37,9 +40,13 @@ func (config *Config) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
+func (cluster clusterState) handleLogin(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling login-uri for: %s", cluster.Name)
-	authCodeURL := cluster.oauth2Config().AuthCodeURL(exampleAppState, oauth2.AccessTypeOffline)
+
+	cookie, authCodeURL := AuthUrl(cluster.StateStore, cluster.oauth2Config())
+	if cookie != nil {
+		http.SetCookie(w, cookie)
+	}
 	if cluster.Connector_ID != "" {
 		log.Printf("Using dex connector with id %#q", cluster.Connector_ID)
 		authCodeURL = fmt.Sprintf("%s&connector_id=%s", authCodeURL, cluster.Connector_ID)
@@ -48,7 +55,7 @@ func (cluster *Cluster) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 }
 
-func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
+func (cluster clusterState) handleCallback(w http.ResponseWriter, r *http.Request) {
 	var (
 		err      error
 		token    *oauth2.Token
@@ -76,12 +83,7 @@ func (cluster *Cluster) handleCallback(w http.ResponseWriter, r *http.Request) {
 			log.Printf("handleCallback: no code in request: %q", r.Form)
 			return
 		}
-		if state := r.FormValue("state"); state != exampleAppState {
-			cluster.renderHTMLError(w, userErrorMsg, http.StatusBadRequest)
-			log.Printf("handleCallback: expected state %q got %q", exampleAppState, state)
-			return
-		}
-		token, err = oauth2Config.Exchange(ctx, code)
+		token, err = CompleteExchange(ctx, r, cluster.StateStore, oauth2Config, code)
 	case "POST":
 		// Form request from frontend to refresh a token.
 		refresh := r.FormValue("refresh_token")
