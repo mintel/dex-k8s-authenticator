@@ -1,6 +1,6 @@
 # Helm chart for dex-k8s-authenticator
 
-This chart installs [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator) in a Kubernetes cluster. 
+This chart installs [`dex-k8s-authenticator`](https://github.com/m-barthelemy/dex-k8s-authenticator) in a Kubernetes cluster. 
 `dex-k8s-authenticator` is a helper application for [`dex`](https://github.com/coreos/dex). `dex` lets you use external 
 Identify Providers (like Google, Microsoft, GitHUb, LDAP) to authenticate access to Kubernetes cluster
 (e.g. for `kubectl`). This helper makes it easy to provide a web UI for one or more clusters.
@@ -18,7 +18,7 @@ global:
 replicaCount: 1
 
 image:
-  repository: mintel/dex-k8s-authenticator
+  repository: m-barthelemy/dex-k8s-authenticator
   tag: latest
   pullPolicy: Always
 

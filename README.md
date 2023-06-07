@@ -1,7 +1,11 @@
+**Warning**
+This is a fork of the now unmaintained official repository.
+This forks aims at keeping the dependencies and Docker image up to date and (ideally) free of vulnerabilities. Pull Requests for bug fixes and minor new features are welcome.
+
 # Dex K8s Authenticator
 
-[![golang-lint](https://github.com/mintel/dex-k8s-authenticator/workflows/golangci-lint/badge.svg)](https://github.com/mintel/dex-k8s-authenticator/actions/workflows/golangci-lint.yml)
-[![k8s-lint](https://github.com/mintel/dex-k8s-authenticator/workflows/k8s-lint/badge.svg)](https://github.com/mintel/dex-k8s-authenticator/actions/workflows/k8s.yml)
+[![golang-lint](https://github.com/m-barthelemy/dex-k8s-authenticator/workflows/golangci-lint/badge.svg)](https://github.com/m-barthelemy/dex-k8s-authenticator/actions/workflows/golangci-lint.yml)
+[![k8s-lint](https://github.com/m-barthelemy/dex-k8s-authenticator/workflows/k8s-lint/badge.svg)](https://github.com/m-barthelemy/dex-k8s-authenticator/actions/workflows/k8s.yml)
 
 A helper web-app which talks to one or more [Dex Identity services](https://github.com/dexidp/dex) to generate
 `kubectl` commands for creating and modifying a `kubeconfig`.
