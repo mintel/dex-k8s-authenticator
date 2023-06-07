@@ -19,10 +19,10 @@ FROM alpine:latest
 
 # Dex connectors, such as GitHub and Google logins require root certificates.
 # Proper installations should manage those certificates, but it's a bad user
-# experience when this doesn't work out of the box.
+#  experience when this doesn't work out of the box.
 #
 # OpenSSL is required so wget can query HTTPS endpoints for health checking.
-RUN apk add --update ca-certificates openssl curl tini
+RUN apk add --update --upgrade ca-certificates openssl curl tini
 
 RUN mkdir -p /app/bin
 COPY --from=0 /app/bin/dex-k8s-authenticator /app/bin/
