@@ -1,6 +1,6 @@
-**Warning**
-This is a fork of the now unmaintained official repository.
-This forks aims at keeping the dependencies and Docker image up to date and (ideally) free of vulnerabilities. Pull Requests for bug fixes and minor new features are welcome.
+> **Warning**
+> This is a fork of the now unmaintained official repository.
+> This forks aims at keeping the dependencies and Docker image up to date and (ideally) free of vulnerabilities. Pull Requests for bug fixes and minor new features are welcome.
 
 # Dex K8s Authenticator
 
