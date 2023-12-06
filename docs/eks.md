@@ -21,7 +21,7 @@ Required Charts
 - nginx-ingress-controller - https://github.com/helm/charts/tree/master/stable/nginx-ingress
 - dex - https://github.com/helm/charts/tree/master/stable/dex
 - kube-oidc-proxy - https://github.com/jetstack/kube-oidc-proxy/tree/master/deploy/charts/kube-oidc-proxy
-- dex-k8s-authenticator - https://github.com/mintel/dex-k8s-authenticator/tree/master/charts
+- dex-k8s-authenticator - https://github.com/sl1pm4t/dex-k8s-authenticator/tree/master/charts
 
 You should also setup a DNS record that points to your nginx controller (load-balancer), and setup an AWS ACM certificate.
 

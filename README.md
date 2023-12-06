@@ -1,7 +1,7 @@
 # Dex K8s Authenticator
 
-[![golang-lint](https://github.com/mintel/dex-k8s-authenticator/workflows/golangci-lint/badge.svg)](https://github.com/mintel/dex-k8s-authenticator/actions/workflows/golangci-lint.yml)
-[![k8s-lint](https://github.com/mintel/dex-k8s-authenticator/workflows/k8s-lint/badge.svg)](https://github.com/mintel/dex-k8s-authenticator/actions/workflows/k8s.yml)
+[![golang-lint](https://github.com/sl1pm4t/dex-k8s-authenticator/workflows/golangci-lint/badge.svg)](https://github.com/sl1pm4t/dex-k8s-authenticator/actions/workflows/golangci-lint.yml)
+[![k8s-lint](https://github.com/sl1pm4t/dex-k8s-authenticator/workflows/k8s-lint/badge.svg)](https://github.com/sl1pm4t/dex-k8s-authenticator/actions/workflows/k8s.yml)
 
 A helper web-app which talks to one or more [Dex Identity services](https://github.com/dexidp/dex) to generate
 `kubectl` commands for creating and modifying a `kubeconfig`.
@@ -42,3 +42,7 @@ Feel free to raise feature-requests and bugs. PR's are also very welcome.
 
 This application is based on the original [example-app](https://github.com/coreos/dex/tree/master/cmd/example-app
 ) available in the CoreOS Dex repo.
+
+## Original Credit
+
+Credit to [mintel](https://github.com/mintel) for starting this project and open sourcing.

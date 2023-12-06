@@ -8,7 +8,7 @@ for the Kubernetes API server](https://kubernetes.io/docs/admin/authentication/#
 This is easy using [`kube-aws` installer](https://github.com/kubernetes-incubator/kube-aws/tree/master/contrib/dex).
 
 If you want an easy way to issue and install `kubectl` credentials, then you should also
-install [`dex-k8s-authenticator`](https://github.com/mintel/dex-k8s-authenticator). There
+install [`dex-k8s-authenticator`](https://github.com/sl1pm4t/dex-k8s-authenticator). There
 is a `helm` chart available for that too (in its repo).
 
 

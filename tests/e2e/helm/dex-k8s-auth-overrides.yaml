@@ -1,5 +1,5 @@
 image:
-  repository: mintel/dex-k8s-authenticator
+  repository: mmorrison/dex-k8s-authenticator
   tag: ${CI_TAG}
   pullPolicy: Never
 

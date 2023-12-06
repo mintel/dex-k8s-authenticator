@@ -46,8 +46,8 @@ jobs:
           name: kind
       - name: build-ci-image
         run: |
-          docker build -t mintel/dex-k8s-authenticator:${GITHUB_SHA} .
-          kind load docker-image mintel/dex-k8s-authenticator:${GITHUB_SHA}
+          docker build -t sl1pm4t/dex-k8s-authenticator:${GITHUB_SHA} .
+          kind load docker-image sl1pm4t/dex-k8s-authenticator:${GITHUB_SHA}
       - name: update-helm-values
         run: |
           set -x

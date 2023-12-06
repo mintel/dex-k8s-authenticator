@@ -16,7 +16,7 @@ If using docker, you can mount a volume like so:
 docker run --rm -t -i \
     -v /tmp/certs:/certs:ro \
     -v /tmp/config.yml:/tmp/config.yml:ro \ 
-    mintel/dex-k8s-authenticator:latest --config /tmp/config.yml
+    mmorrison/dex-k8s-authenticator:latest --config /tmp/config.yml
 ```
 
 ### 2. `trusted_root_ca` config option
